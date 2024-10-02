@@ -1,24 +1,22 @@
 package com.tstartup.tserver.common;
 
-public class ApiToken {
+public class ApiAuthToken {
 
     public static final byte STATS_INIT = 0;
-    public static final byte STATS_BAN= 1;
-
     private String value;
     private String userId;
     private byte status;
 
-    public ApiToken() {
+    public ApiAuthToken() {
     }
 
-    public ApiToken(String value, String userId) {
+    public ApiAuthToken(String value, String userId) {
         this.value = value;
         this.userId = userId;
         this.status = STATS_INIT;
     }
 
-    public ApiToken(String value, String userId, byte status) {
+    public ApiAuthToken(String value, String userId, byte status) {
         this.value = value;
         this.userId = userId;
         this.status = status;

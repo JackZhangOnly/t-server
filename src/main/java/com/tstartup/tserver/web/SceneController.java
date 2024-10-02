@@ -1,7 +1,7 @@
 package com.tstartup.tserver.web;
 
 
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.service.SceneBusService;
 import com.tstartup.tserver.web.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,20 +35,20 @@ public class SceneController {
 
     @Operation(summary = "创建或更新", description = "update")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ApiResult update(HttpServletRequest request, @RequestBody @Valid SceneUpdateDto updateDto) {
+    public ApiResponse update(HttpServletRequest request, @RequestBody @Valid SceneUpdateDto updateDto) {
         return sceneBusService.update(updateDto);
     }
 
 
     @Operation(summary = "删除", description = "delete")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public ApiResult delete(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
+    public ApiResponse delete(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
         return sceneBusService.delete(commonIdDto);
     }
 
     @Operation(summary = "列表查询", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public ApiResult<List<SceneItemDto>> list(HttpServletRequest request, @RequestBody @Valid SceneQryDto sceneQryDto) {
+    public ApiResponse<List<SceneItemDto>> list(HttpServletRequest request, @RequestBody @Valid SceneQryDto sceneQryDto) {
         return sceneBusService.list(sceneQryDto);
     }
 

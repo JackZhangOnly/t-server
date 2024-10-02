@@ -2,7 +2,7 @@ package com.tstartup.tserver.web;
 
 
 import com.tstartup.tserver.common.PageVo;
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.service.ArticleBusService;
 import com.tstartup.tserver.web.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ public class ArticleController {
 
     @Operation(summary = "列表", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public ApiResult<PageVo<ArticleItemDto>> list(HttpServletRequest request, @RequestBody @Valid ArticlePageQryDto pageQryDto) {
+    public ApiResponse<PageVo<ArticleItemDto>> list(HttpServletRequest request, @RequestBody @Valid ArticlePageQryDto pageQryDto) {
         return articleBusService.list(pageQryDto);
     }
 

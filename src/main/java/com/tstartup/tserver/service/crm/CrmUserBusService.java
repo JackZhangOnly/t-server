@@ -2,7 +2,7 @@ package com.tstartup.tserver.service.crm;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.common.response.ResultCodeEnum;
 import com.tstartup.tserver.persistence.dataobject.TCrmUser;
 import com.tstartup.tserver.persistence.service.TCrmUserService;
@@ -29,7 +29,7 @@ public class CrmUserBusService {
     @Resource
     private TCrmUserService crmUserService;
 
-    public ApiResult<CrmUserLoginRetDto> login(CrmUserLoginDto dto) {
+    public ApiResponse<CrmUserLoginRetDto> login(CrmUserLoginDto dto) {
         String username = dto.getUserName();
         String pwd = dto.getPassword();
 
@@ -39,7 +39,7 @@ public class CrmUserBusService {
                 .eq(TCrmUser::getStatus, 1)
                 .last("limit 1"));
         if (Objects.isNull(tCrmUser)) {
-            return ApiResult.newError(ResultCodeEnum.ERROR_PWD);
+            return ApiResponse.newError(ResultCodeEnum.ERROR_PWD);
         }
 
         String token = AESUtils.encrypt(String.valueOf(tCrmUser.getId()));
@@ -55,6 +55,6 @@ public class CrmUserBusService {
 
         crmUserService.updateById(tCrmUser);
 
-        return ApiResult.newSuccess(retDto);
+        return ApiResponse.newSuccess(retDto);
     }
 }

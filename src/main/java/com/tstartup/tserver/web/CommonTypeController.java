@@ -1,7 +1,7 @@
 package com.tstartup.tserver.web;
 
 
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.service.CommonTypeBusService;
 import com.tstartup.tserver.web.dto.CommonIdDto;
 import com.tstartup.tserver.web.dto.CommonTypeItemDto;
@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * <p>
@@ -40,20 +39,20 @@ public class CommonTypeController {
 
     @Operation(summary = "创建或更新", description = "update")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ApiResult update(HttpServletRequest request, @RequestBody @Valid CommonTypeUpdateDto updateDto) {
+    public ApiResponse update(HttpServletRequest request, @RequestBody @Valid CommonTypeUpdateDto updateDto) {
        return commonTypeBusService.update(updateDto);
     }
 
 
     @Operation(summary = "删除", description = "delete")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public ApiResult delete(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
+    public ApiResponse delete(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
         return commonTypeBusService.delete(commonIdDto);
     }
 
     @Operation(summary = "列表查询", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public ApiResult<List<CommonTypeItemDto>> list(HttpServletRequest request, @RequestBody @Valid CommonTypeQryDto typeQryDto) {
+    public ApiResponse<List<CommonTypeItemDto>> list(HttpServletRequest request, @RequestBody @Valid CommonTypeQryDto typeQryDto) {
         return commonTypeBusService.list(typeQryDto);
     }
 

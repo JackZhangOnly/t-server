@@ -1,11 +1,9 @@
 package com.tstartup.tserver.config.interceptor;
 
 
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.tstartup.tserver.common.ApiToken;
-import com.tstartup.tserver.common.response.ApiResult;
-import com.tstartup.tserver.config.IgnoreAuth;
+import com.tstartup.tserver.common.ApiAuthToken;
+import com.tstartup.tserver.config.IgnoreLogin;
 import com.tstartup.tserver.persistence.dataobject.TCrmUser;
 import com.tstartup.tserver.persistence.service.TCrmUserService;
 import com.tstartup.tserver.util.AESUtils;
@@ -21,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 @Component
@@ -48,10 +45,10 @@ public class CrmInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        IgnoreAuth ignoreAuth = method.getMethod().getAnnotation(IgnoreAuth.class);
+        IgnoreLogin ignoreLogin = method.getMethod().getAnnotation(IgnoreLogin.class);
 
         //需要校验登陆
-        boolean needLogin = ignoreAuth == null || !ignoreAuth.value();
+        boolean needLogin = ignoreLogin == null || !ignoreLogin.value();
 
         if (needLogin) {
             String token = request.getHeader(LOGIN_TOKEN_KEY);
@@ -61,7 +58,7 @@ public class CrmInterceptor implements HandlerInterceptor {
                 return false;
             }
 
-            ApiToken apiToken = new ApiToken();
+            ApiAuthToken apiToken = new ApiAuthToken();
             apiToken.setUserId(id);
             HttpServletUtil.setUserInfo(apiToken);
         }

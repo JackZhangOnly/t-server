@@ -1,8 +1,7 @@
 package com.tstartup.tserver.web;
 
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.service.CityBusService;
-import com.tstartup.tserver.web.dto.ArticleUpdateDto;
 import com.tstartup.tserver.web.dto.CityItemDto;
 import com.tstartup.tserver.web.dto.CityItemOpDto;
 import com.tstartup.tserver.web.dto.CityQryDto;
@@ -35,14 +34,14 @@ public class CityController {
 
     @Operation(summary = "列表", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public ApiResult<List<CityItemDto>> list(HttpServletRequest request,  @RequestBody @Valid CityQryDto cityQryDto) {
+    public ApiResponse<List<CityItemDto>> list(HttpServletRequest request, @RequestBody @Valid CityQryDto cityQryDto) {
         return cityBusService.list(cityQryDto);
     }
 
 
     @Operation(summary = "更新", description = "update")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ApiResult update(HttpServletRequest request,  @RequestBody @Valid CityItemOpDto itemOpDto) {
+    public ApiResponse update(HttpServletRequest request, @RequestBody @Valid CityItemOpDto itemOpDto) {
         return cityBusService.update(itemOpDto);
     }
 }

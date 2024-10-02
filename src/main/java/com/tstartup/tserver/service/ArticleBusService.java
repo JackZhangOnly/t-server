@@ -9,7 +9,7 @@ import com.google.api.client.util.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tstartup.tserver.common.PageVo;
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.enums.CommonTypeEnum;
 import com.tstartup.tserver.persistence.dataobject.*;
 import com.tstartup.tserver.persistence.service.TArticleService;
@@ -56,7 +56,7 @@ public class ArticleBusService {
     private TSceneService sceneService;
 
     @Transactional
-    public ApiResult update(ArticleUpdateDto updateDto) {
+    public ApiResponse update(ArticleUpdateDto updateDto) {
         Integer id = updateDto.getId();
         if (Objects.isNull(id)) {
             TArticle tArticle = new TArticle();
@@ -86,11 +86,11 @@ public class ArticleBusService {
             processAddCommonType(articleTypeIdList, articleId, CommonTypeEnum.ARTICLE_TYPE);
 
 
-            return ApiResult.newSuccess();
+            return ApiResponse.newSuccess();
         } else {
             TArticle tArticle = articleService.getById(id);
             if (Objects.isNull(tArticle)) {
-                return ApiResult.newParamError();
+                return ApiResponse.newParamError();
             }
 
             BeanUtils.copyProperties(updateDto, tArticle);
@@ -123,7 +123,7 @@ public class ArticleBusService {
             processUpdateCommonType(sceneIdList, articleId, CommonTypeEnum.SCENE_ID, typeRelationList);
             processUpdateCommonType(articleTypeIdList, articleId, CommonTypeEnum.ARTICLE_TYPE, typeRelationList);
 
-            return ApiResult.newSuccess();
+            return ApiResponse.newSuccess();
         }
     }
 
@@ -177,7 +177,7 @@ public class ArticleBusService {
         }
     }
 
-    public ApiResult<PageVo<ArticleItemDto>> list(ArticlePageQryDto pageQryDto) {
+    public ApiResponse<PageVo<ArticleItemDto>> list(ArticlePageQryDto pageQryDto) {
 
         LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(TArticle::getIsDelete, 0);
@@ -200,10 +200,10 @@ public class ArticleBusService {
 
             return vo;
         });
-        return ApiResult.newSuccess(pageVo);
+        return ApiResponse.newSuccess(pageVo);
     }
 
-    public ApiResult<PageArticleVo> listByAdmin(ArticlePageQryDto pageQryDto) {
+    public ApiResponse<PageArticleVo> listByAdmin(ArticlePageQryDto pageQryDto) {
         LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(TArticle::getIsDelete, 0);
         queryWrapper.ne(TArticle::getStatus, 5);
@@ -240,7 +240,7 @@ public class ArticleBusService {
         pageArticleVo.setRecords(recordList);
         pageArticleVo.setTotal(pageVo.getTotal());
 
-        return ApiResult.newSuccess(pageArticleVo);
+        return ApiResponse.newSuccess(pageArticleVo);
     }
 
 
@@ -306,22 +306,22 @@ public class ArticleBusService {
         }
     }
 
-    public ApiResult delete(CommonIdDto idDto) {
+    public ApiResponse delete(CommonIdDto idDto) {
         LambdaUpdateWrapper<TArticle> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(TArticle::getId, idDto.getId());
         updateWrapper.set(TArticle::getIsDelete, 1);
         updateWrapper.set(TArticle::getStatus, 5);
 
         articleService.update(updateWrapper);
-        return ApiResult.newSuccess();
+        return ApiResponse.newSuccess();
     }
 
-    public ApiResult publish(CommonIdDto idDto) {
+    public ApiResponse publish(CommonIdDto idDto) {
         LambdaUpdateWrapper<TArticle> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(TArticle::getId, idDto.getId());
         updateWrapper.set(TArticle::getStatus, 4);
 
         articleService.update(updateWrapper);
-        return ApiResult.newSuccess();
+        return ApiResponse.newSuccess();
     }
 }

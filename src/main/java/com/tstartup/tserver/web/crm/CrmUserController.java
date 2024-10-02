@@ -1,6 +1,6 @@
 package com.tstartup.tserver.web.crm;
 
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.service.crm.CrmUserBusService;
 import com.tstartup.tserver.web.dto.crm.CrmUserLoginDto;
 import com.tstartup.tserver.web.dto.crm.CrmUserLoginRetDto;
@@ -32,7 +32,7 @@ public class CrmUserController {
     // 登录
     @Operation(summary = "登录")
     @PostMapping("/login")
-    public ApiResult<CrmUserLoginRetDto> login(@RequestBody @Valid CrmUserLoginDto dto) {
+    public ApiResponse<CrmUserLoginRetDto> login(@RequestBody @Valid CrmUserLoginDto dto) {
         return crmUserBusService.login(dto);
     }
 }

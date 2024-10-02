@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.api.client.util.Strings;
 import com.google.common.collect.Maps;
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.enums.CommonTypeEnum;
 import com.tstartup.tserver.persistence.dataobject.TCity;
 import com.tstartup.tserver.persistence.dataobject.TCommonType;
@@ -49,7 +49,7 @@ public class SceneBusService {
     @Resource
     private TCommonTypeService commonTypeService;
 
-    public ApiResult update(SceneUpdateDto updateDto) {
+    public ApiResponse update(SceneUpdateDto updateDto) {
         Integer id = updateDto.getId();
         TScene scene = null;
         if (Objects.isNull(id)) {
@@ -65,7 +65,7 @@ public class SceneBusService {
         } else {
             scene = sceneService.getById(id);
             if (Objects.isNull(scene)) {
-                return ApiResult.newParamError();
+                return ApiResponse.newParamError();
             }
             BeanUtils.copyProperties(updateDto, scene);
             scene.setId(id);
@@ -82,7 +82,7 @@ public class SceneBusService {
 
         saveSceneType(sceneId, updateDto.getSceneTypeIdList());
 
-        return ApiResult.newSuccess();
+        return ApiResponse.newSuccess();
     }
 
     private void saveSceneType(Integer sceneId, List<Integer> sceneTypeIdList) {
@@ -108,12 +108,12 @@ public class SceneBusService {
         sceneTypeRelationService.saveBatch(relationList);
     }
 
-    public ApiResult delete(CommonIdDto idDto) {
+    public ApiResponse delete(CommonIdDto idDto) {
         sceneService.removeById(idDto.getId());
-        return ApiResult.newSuccess();
+        return ApiResponse.newSuccess();
     }
 
-    public ApiResult<List<SceneItemDto>> list(SceneQryDto sceneQryDto) {
+    public ApiResponse<List<SceneItemDto>> list(SceneQryDto sceneQryDto) {
         Integer cityId = sceneQryDto.getCityId();
         String sceneName = sceneQryDto.getSceneName();
 
@@ -182,7 +182,7 @@ public class SceneBusService {
             });
         }
 
-        return ApiResult.newSuccess(sceneItemDtoList);
+        return ApiResponse.newSuccess(sceneItemDtoList);
     }
 
 }

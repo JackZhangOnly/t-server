@@ -1,6 +1,6 @@
 package com.tstartup.tserver.config.advice;
 
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -29,14 +29,14 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage(), e);
 
         if (e instanceof MissingServletRequestParameterException) {
-            return ApiResult.newParamError(e.getMessage());
+            return ApiResponse.newParamError(e.getMessage());
         } else if (e instanceof HttpRequestMethodNotSupportedException) {
-            return ApiResult.newParamError(e.getMessage());
+            return ApiResponse.newParamError(e.getMessage());
         } else if (e instanceof HttpMessageNotReadableException) {
-            return ApiResult.newParamError();
+            return ApiResponse.newParamError();
         }
 
-        return ApiResult.newSysError();
+        return ApiResponse.newSysError();
     }
 
     /**
@@ -59,6 +59,6 @@ public class GlobalExceptionHandler {
                     .append(fieldError.getDefaultMessage())
                     .append(" !!! ");
         }
-        return ApiResult.newParamError(message.toString());
+        return ApiResponse.newParamError(message.toString());
     }
 }

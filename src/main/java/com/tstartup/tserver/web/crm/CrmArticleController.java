@@ -1,8 +1,7 @@
 package com.tstartup.tserver.web.crm;
 
 
-import com.tstartup.tserver.common.PageVo;
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.service.ArticleBusService;
 import com.tstartup.tserver.web.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,26 +34,26 @@ public class CrmArticleController {
 
     @Operation(summary = "创建或更新", description = "update")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ApiResult update(HttpServletRequest request, @RequestBody @Valid ArticleUpdateDto updateDto) {
+    public ApiResponse update(HttpServletRequest request, @RequestBody @Valid ArticleUpdateDto updateDto) {
         return articleBusService.update(updateDto);
     }
 
 
     @Operation(summary = "删除", description = "delete")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public ApiResult delete(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
+    public ApiResponse delete(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
         return articleBusService.delete(commonIdDto);
     }
 
     @Operation(summary = "列表-后台管理", description = "ListByAdmin")
     @RequestMapping(value = "/ListByAdmin", method = RequestMethod.POST)
-    public ApiResult<PageArticleVo> ListByAdmin(HttpServletRequest request, @RequestBody @Valid ArticlePageQryDto pageQryDto) {
+    public ApiResponse<PageArticleVo> ListByAdmin(HttpServletRequest request, @RequestBody @Valid ArticlePageQryDto pageQryDto) {
         return articleBusService.listByAdmin(pageQryDto);
     }
 
     @Operation(summary = "发布", description = "publish")
     @RequestMapping(value = "/publish", method = RequestMethod.POST)
-    public ApiResult publish(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
+    public ApiResponse publish(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
         return articleBusService.publish(commonIdDto);
     }
 }

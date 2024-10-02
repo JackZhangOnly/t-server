@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.api.client.util.Strings;
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.persistence.dataobject.TCity;
 import com.tstartup.tserver.persistence.service.TCityService;
 import com.tstartup.tserver.util.DateUtil;
@@ -33,7 +33,7 @@ public class CityBusService {
     @Resource
     private TCityService cityService;
 
-    public ApiResult<List<CityItemDto>> list(CityQryDto cityQryDto) {
+    public ApiResponse<List<CityItemDto>> list(CityQryDto cityQryDto) {
         Integer parentId = cityQryDto.getParentId();
         parentId = Objects.isNull(parentId) ? 0 : parentId;
 
@@ -54,10 +54,10 @@ public class CityBusService {
             return cityItemDto;
         }).collect(Collectors.toList());
 
-        return ApiResult.newSuccess(cityItemDtoList);
+        return ApiResponse.newSuccess(cityItemDtoList);
     }
 
-    public ApiResult update(CityItemOpDto itemOpDto) {
+    public ApiResponse update(CityItemOpDto itemOpDto) {
         Integer id = itemOpDto.getId();
 
 
@@ -68,26 +68,26 @@ public class CityBusService {
             tCity.setCreateTime(DateUtil.getNowSeconds());
 
             cityService.save(tCity);
-            return ApiResult.newSuccess();
+            return ApiResponse.newSuccess();
         } else {
             TCity tCity = cityService.getById(id);
             if (Objects.isNull(tCity)) {
-                return ApiResult.newParamError();
+                return ApiResponse.newParamError();
             }
             copyCityItem(itemOpDto, tCity);
 
             tCity.setUpdateTime(DateUtil.getNowSeconds());
 
             cityService.updateById(tCity);
-            return ApiResult.newSuccess();
+            return ApiResponse.newSuccess();
         }
     }
 
-    public ApiResult delete(CommonIdDto idDto) {
+    public ApiResponse delete(CommonIdDto idDto) {
         Integer id = idDto.getId();
         cityService.removeById(id);
 
-        return ApiResult.newSuccess();
+        return ApiResponse.newSuccess();
     }
 
     private void copyCityItem(CityItemOpDto itemOpDto, TCity tCity) {

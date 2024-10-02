@@ -2,7 +2,7 @@ package com.tstartup.tserver.common;
 
 import java.io.Serializable;
 
-public class UserApiRequest implements Serializable {
+public class UserRequest implements Serializable {
 
     /**
      * 设备Id

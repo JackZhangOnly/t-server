@@ -1,7 +1,7 @@
 package com.tstartup.tserver.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.tstartup.tserver.common.response.ApiResult;
+import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.persistence.dataobject.TCommonType;
 import com.tstartup.tserver.persistence.service.TCommonTypeService;
 import com.tstartup.tserver.util.DateUtil;
@@ -9,7 +9,6 @@ import com.tstartup.tserver.web.dto.CommonIdDto;
 import com.tstartup.tserver.web.dto.CommonTypeItemDto;
 import com.tstartup.tserver.web.dto.CommonTypeQryDto;
 import com.tstartup.tserver.web.dto.CommonTypeUpdateDto;
-import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -33,12 +32,12 @@ public class CommonTypeBusService {
     private TCommonTypeService commonTypeService;
 
 
-    public ApiResult update(CommonTypeUpdateDto updateDto) {
+    public ApiResponse update(CommonTypeUpdateDto updateDto) {
         Integer id = updateDto.getId();
         if (Objects.nonNull(id)) {
             TCommonType tCommonType = commonTypeService.getById(id);
             if (Objects.isNull(tCommonType)) {
-                return ApiResult.newParamError();
+                return ApiResponse.newParamError();
             }
             tCommonType.setName(updateDto.getName());
             tCommonType.setDescription(updateDto.getDesc());
@@ -48,7 +47,7 @@ public class CommonTypeBusService {
 
             commonTypeService.updateById(tCommonType);
 
-            return ApiResult.newSuccess();
+            return ApiResponse.newSuccess();
         } else {
             TCommonType tCommonType = new TCommonType();
 
@@ -60,16 +59,16 @@ public class CommonTypeBusService {
 
             commonTypeService.save(tCommonType);
 
-            return ApiResult.newSuccess();
+            return ApiResponse.newSuccess();
         }
     }
 
-    public ApiResult delete(CommonIdDto idDto) {
+    public ApiResponse delete(CommonIdDto idDto) {
         commonTypeService.removeById(idDto.getId());
-        return ApiResult.newSuccess();
+        return ApiResponse.newSuccess();
     }
 
-    public ApiResult<List<CommonTypeItemDto>> list(CommonTypeQryDto typeQryDto) {
+    public ApiResponse<List<CommonTypeItemDto>> list(CommonTypeQryDto typeQryDto) {
         String busIdentity = typeQryDto.getTypeIdentity();
 
         List<TCommonType> tCommonTypeList = commonTypeService.list(Wrappers.<TCommonType>lambdaQuery()
@@ -83,11 +82,11 @@ public class CommonTypeBusService {
 
                 return typeItemDto;
             }).collect(Collectors.toList());
-            return ApiResult.newSuccess(typeItemDtoList);
+            return ApiResponse.newSuccess(typeItemDtoList);
 
         }
 
 
-        return ApiResult.newSuccess();
+        return ApiResponse.newSuccess();
     }
 }

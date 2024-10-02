@@ -7,19 +7,14 @@ import java.util.stream.Collectors;
 
 public enum ResultCodeEnum {
 
-    ERROR_PWD(304, "Wrong Password"),
+    ERROR_PWD(1001, "Wrong Password"),
 
-    INVALID_PARAM(306, "Invalid Parameter")
+    INVALID_PARAM(1002, "Invalid Parameter")
 
-    ,SYSTEM_EXCEPTION(990, "System exception")
-
-    ,DATA_ERROR(999, "data error")
-
-    //处理异常
-    ,HANDLING_EXCEPTIONS(997, "Handling Exceptions")
+    ,SYSTEM_EXCEPTION(1003, "System exception")
 
     //处理中
-    ,IN_PROGRESS(996, "In progress")
+    ,IN_PROGRESS(1004, "In progress")
 
 
     ;
