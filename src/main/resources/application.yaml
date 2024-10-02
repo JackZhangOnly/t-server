@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: t-server
+  profiles:
+    active: test
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  main:
+    allow-circular-references: true
+server:
+  port: 18081
+  shutdown: graceful
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.tstartup.tserver.persistence.mapper
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    cache-enabled: false
+    local-cache-scope: statement
+
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 60000
+  compression:
+    request:
+      enabled: true
+      min-request-size: 8192
+    response:
+      enabled: true

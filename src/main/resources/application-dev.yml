@@ -1,0 +1,60 @@
+spring:
+  datasource:
+    masterdb:
+      driverClassName: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/tdb?serverTimezone=GMT%2b3&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+      username: root
+      password: root5618
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 5
+      minIdle: 5
+      maxActive: 22
+      maxWait: 30000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    com.renxing.meetchachat: debug
+    org.springframework.jdbc.core.JdbcTemplate: debug
+    com.baomidou.mybatisplus: debug
+    org.apache.http: warn
+    com.aliyun.openservices: warn
+    io.lettuce.core: warn
+    org.springframework.data.redis.core: warn
+    feign: debug
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: false
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+#springDoc接口文档
+springdoc:
+  # 配置需要生成接口文档的扫描包
+  packages-to-scan: com.tstartup.tserver.web
+  default-produces-media-type: application/json
+  swagger-ui:
+    # 修改Swagger UI路径
+    path: swagger-ui.html
+    # 开启Swagger UI界面
+    enabled: true
+  api-docs:
+    # 修改api-docs路径
+    path: /v3/api-docs
+    # 开启api-docs
+    enabled: true
+  # 分组
+  group-configs:
+    - group: all
+      paths-to-match: /**
+    - group: api
+      paths-to-match: /api/**
