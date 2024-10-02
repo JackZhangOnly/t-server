@@ -1,11 +1,13 @@
-package com.tstartup.tserver.persistence.dataobject;
+package com.tstartup.tserver.web.dto.circle;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -16,20 +18,18 @@ import lombok.experimental.Accessors;
  * @since 2024-10-02
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-public class TCircleGroup implements Serializable {
+public class CircleGroupDto implements Serializable {
 
-    private static final long serialVersionUID=1L;
-
-    @TableId(value = "id", type = IdType.AUTO)
+    @Schema(description = "id")
     private Integer id;
 
+    @Schema(description = "name")
     private String name;
 
-
+    @Schema(description = "是否热门")
     private Integer isHot;
 
+    @Schema(description = "description")
     private String description;
 
     private Integer createTime;
