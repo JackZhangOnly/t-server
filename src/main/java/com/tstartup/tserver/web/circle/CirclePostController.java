@@ -18,7 +18,7 @@ import java.util.List;
 
 @Tag(name = "C端-圈子-分组")
 @RestController
-@RequestMapping("/api/t/circleGroup")
+@RequestMapping("/api/t/circlePost")
 public class CirclePostController {
 
     @Resource

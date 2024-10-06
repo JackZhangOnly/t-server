@@ -15,14 +15,18 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ArticlePageQryDto {
 
-   /* @Schema(description = "cityId")
-    private Integer cityId;*/
+    @Schema(description = "cityId")
+    private Integer cityId;
+
+
+    @Schema(description = "tripTypeId")
+    private Integer tripTypeId;
 
     @Schema(description = "pageNo")
-    @NotNull(message = "pageNo is required")
+    //@NotNull(message = "pageNo is required")
     private Integer pageNo;
 
     @Schema(description = "pageSize")
-    @NotNull(message = "pageSize is required")
+   // @NotNull(message = "pageSize is required")
     private Integer pageSize;
 }

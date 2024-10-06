@@ -177,14 +177,16 @@ public class ArticleBusService {
         }
     }
 
-    public ApiResponse<PageVo<ArticleItemDto>> list(ArticlePageQryDto pageQryDto) {
+    public ApiResponse<PageVo<ArticleItemDto>> homeList(ArticlePageQryDto pageQryDto) {
+        final int pageNo = 1;
+        final int pageSize = 30;
 
         LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(TArticle::getIsDelete, 0);
         queryWrapper.eq(TArticle::getStatus, 4);
 
 
-        Page<TArticle> page = articleService.page(new Page<>(pageQryDto.getPageNo(), pageQryDto.getPageSize()), queryWrapper);
+        Page<TArticle> page = articleService.page(new Page<>(pageNo, pageSize), queryWrapper);
 
         PageVo<ArticleItemDto> pageVo = PageUtil.getPageVo(page, (e) -> {
             ArticleItemDto vo = new ArticleItemDto();
