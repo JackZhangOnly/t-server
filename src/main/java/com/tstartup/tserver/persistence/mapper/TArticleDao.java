@@ -23,20 +23,27 @@ public interface TArticleDao {
     @Select({
     """
         <script>
-                <if test='dto.type!=null and dto.type!=2'>
+                SELECT
+                    article.*
+                FROM
+                    t_article article
+                    LEFT JOIN t_article_type_relation articleRelation ON article.id = articleRelation.article_id 
+                    WHERE article.status = 4
                     
-                </if>
-                <foreach collection='dto.uidList' item='uid' open=' AND uid IN (' separator=',' close=')'>
-                #{uid}
-               </foreach>
-            GROUP BY
-                LIMIT #{dto.offset},
-                #{dto.size};
-            SELECT
-                FOUND_ROWS() AS total;
+                    <if test='tripTypeId !=null'>
+                        AND articleRelation.type_identity = 'tripType'
+                        AND articleRelation.type_id  = #{tripTypeId}
+                    </if>
+                    <if test='cityIdList !=null'>
+                        AND articleRelation.type_identity = 'city'                        
+                        <foreach collection='cityIdList' item='typeId' open=' AND articleRelation.type_id IN (' separator=',' close=')'>
+                          #{typeId}
+                       </foreach>
+                    </if>
+                    order by article.id desc
         </script>
     """
     })
-    List<TArticle> queryArticleList(@Param("tripTypeId") Integer tripTypeId, @Param("cityId") Integer cityId, @Param("start") Integer start, @Param("limit") Integer limit );
+    List<TArticle> queryArticleList(@Param("tripTypeId") Integer tripTypeId, @Param("cityIdList") List<Integer> cityIdList, @Param("start") Integer start, @Param("limit") Integer limit );
 
 }

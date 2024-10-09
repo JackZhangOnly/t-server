@@ -12,10 +12,8 @@ import com.tstartup.tserver.common.PageVo;
 import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.enums.CommonTypeEnum;
 import com.tstartup.tserver.persistence.dataobject.*;
-import com.tstartup.tserver.persistence.service.TArticleService;
-import com.tstartup.tserver.persistence.service.TArticleTypeRelationService;
-import com.tstartup.tserver.persistence.service.TCommonTypeService;
-import com.tstartup.tserver.persistence.service.TSceneService;
+import com.tstartup.tserver.persistence.mapper.TArticleDao;
+import com.tstartup.tserver.persistence.service.*;
 import com.tstartup.tserver.util.DateUtil;
 import com.tstartup.tserver.util.PageUtil;
 import com.tstartup.tserver.web.dto.*;
@@ -27,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,6 +53,12 @@ public class ArticleBusService {
 
     @Resource
     private TSceneService sceneService;
+
+    @Resource
+    private TCityService cityService;
+
+    @Resource
+    private TArticleDao articleDao;
 
     @Transactional
     public ApiResponse update(ArticleUpdateDto updateDto) {
@@ -181,28 +186,74 @@ public class ArticleBusService {
         final int pageNo = 1;
         final int pageSize = 30;
 
-        LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(TArticle::getIsDelete, 0);
-        queryWrapper.eq(TArticle::getStatus, 4);
+        Integer cityId = pageQryDto.getCityId();
+        Integer tripTypeId = pageQryDto.getTripTypeId();
 
+        PageVo<ArticleItemDto> pageVo = new PageVo<>();
+        if (Objects.isNull(cityId) && Objects.isNull(tripTypeId)) {
+            LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(TArticle::getIsDelete, 0).eq(TArticle::getStatus, 4).orderByDesc(TArticle::getId);
 
-        Page<TArticle> page = articleService.page(new Page<>(pageNo, pageSize), queryWrapper);
+            Page<TArticle> page = articleService.page(new Page<>(pageNo, pageSize), queryWrapper);
+            pageVo = PageUtil.getPageVo(page, (e) -> {
+                ArticleItemDto vo = new ArticleItemDto();
+                BeanUtils.copyProperties(e, vo);
 
-        PageVo<ArticleItemDto> pageVo = PageUtil.getPageVo(page, (e) -> {
-            ArticleItemDto vo = new ArticleItemDto();
-            BeanUtils.copyProperties(e, vo);
+                String source = e.getSource();
+                if (!Strings.isNullOrEmpty(source)) {
+                    SourceItemVo sourceItemVo = JSON.parseObject(source, SourceItemVo.class);
+                    vo.setSource(sourceItemVo);
+                }
 
-            String source = e.getSource();
-            if (!Strings.isNullOrEmpty(source)) {
-                SourceItemVo sourceItemVo = JSON.parseObject(source, SourceItemVo.class);
-                vo.setSource(sourceItemVo);
+                return vo;
+            });
+        } else {
+            List<Integer> cityIdList = null;
+            if (Objects.nonNull(cityId)) {
+                cityIdList = Arrays.asList(cityId);
+                TCity city = cityService.getById(cityId);
+                if (city.getParentId() == 0) {
+                    List<TCity> cityList = cityService.list(Wrappers.<TCity>lambdaQuery().eq(TCity::getParentId, cityId));
+                    if (!CollectionUtils.isEmpty(cityList)) {
+                        List<Integer> cityIdListNew = cityList.stream().map(TCity::getId).collect(Collectors.toList());
+                        cityIdList.addAll(cityIdListNew);
+                    }
+                }
             }
+            Integer start = (pageNo - 1) * pageSize;
+            List<TArticle> tArticleList = articleDao.queryArticleList(tripTypeId, cityIdList, start, pageSize);
+            if (!CollectionUtils.isEmpty(tArticleList)) {
+                List<ArticleItemDto> articleItemDtoList = tArticleList.stream().map(tArticle -> {
+                    ArticleItemDto vo = new ArticleItemDto();
+                    BeanUtils.copyProperties(tArticle, vo);
 
+                    String source = tArticle.getSource();
+                    if (!Strings.isNullOrEmpty(source)) {
+                        SourceItemVo sourceItemVo = JSON.parseObject(source, SourceItemVo.class);
+                        vo.setSource(sourceItemVo);
+                    }
 
+                    return vo;
+                }).collect(Collectors.toList());
+                pageVo.setRecords(articleItemDtoList);
+                pageVo.setTotal(Long.valueOf(articleItemDtoList.size()));
+            }
+        }
 
-            return vo;
-        });
+        List<ArticleItemDto> recordList = pageVo.getRecords();
+
+        buildCommonTypeItemList(recordList, CommonTypeEnum.KEYWORD);
+        buildCommonTypeItemList(recordList, CommonTypeEnum.TAG);
+        buildCommonTypeItemList(recordList, CommonTypeEnum.ARTICLE_TYPE);
+        buildCommonTypeItemList(recordList, CommonTypeEnum.TRIP_TYPE);
+        buildCommonTypeItemList(recordList, CommonTypeEnum.SCENE_ID);
+
+        PageArticleVo pageArticleVo = new PageArticleVo();
+        pageArticleVo.setRecords(recordList);
+        pageArticleVo.setTotal(pageVo.getTotal());
+
         return ApiResponse.newSuccess(pageVo);
+
     }
 
     public ApiResponse<PageArticleVo> listByAdmin(ArticlePageQryDto pageQryDto) {
