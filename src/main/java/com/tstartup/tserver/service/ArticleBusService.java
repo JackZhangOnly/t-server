@@ -182,17 +182,22 @@ public class ArticleBusService {
         }
     }
 
-    public ApiResponse<PageVo<ArticleItemDto>> homeList(ArticlePageQryDto pageQryDto) {
+    public ApiResponse<PageVo<ArticleItemDto>> homeList(ArticleHomePageQryDto pageQryDto) {
         final int pageNo = 1;
         final int pageSize = 30;
 
         Integer cityId = pageQryDto.getCityId();
         Integer tripTypeId = pageQryDto.getTripTypeId();
+        Integer isHot = pageQryDto.getIsHot();
 
         PageVo<ArticleItemDto> pageVo = new PageVo<>();
         if (Objects.isNull(cityId) && Objects.isNull(tripTypeId)) {
             LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(TArticle::getIsDelete, 0).eq(TArticle::getStatus, 4).orderByDesc(TArticle::getId);
+            queryWrapper.eq(TArticle::getIsDelete, 0)
+                    .eq(TArticle::getStatus, 4)
+                    .eq(TArticle::getIsHot, isHot)
+
+                    .orderByDesc(TArticle::getId);
 
             Page<TArticle> page = articleService.page(new Page<>(pageNo, pageSize), queryWrapper);
             pageVo = PageUtil.getPageVo(page, (e) -> {
@@ -221,7 +226,7 @@ public class ArticleBusService {
                 }
             }
             Integer start = (pageNo - 1) * pageSize;
-            List<TArticle> tArticleList = articleDao.queryArticleList(tripTypeId, cityIdList, start, pageSize);
+            List<TArticle> tArticleList = articleDao.queryArticleList(tripTypeId, cityIdList, isHot, start, pageSize);
             if (!CollectionUtils.isEmpty(tArticleList)) {
                 List<ArticleItemDto> articleItemDtoList = tArticleList.stream().map(tArticle -> {
                     ArticleItemDto vo = new ArticleItemDto();

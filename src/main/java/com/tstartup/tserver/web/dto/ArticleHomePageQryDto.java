@@ -3,8 +3,6 @@ package com.tstartup.tserver.web.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * @ClassName ArticlePageQryDto
  * @Description
@@ -13,7 +11,7 @@ import javax.validation.constraints.NotNull;
  * @Version 1.0
  */
 @Data
-public class ArticlePageQryDto {
+public class ArticleHomePageQryDto {
 
     @Schema(description = "cityId")
     private Integer cityId;
@@ -22,6 +20,9 @@ public class ArticlePageQryDto {
     @Schema(description = "tripTypeId")
     private Integer tripTypeId;
 
+
+    @Schema(description = "isHot  1:hot 0：not hot")
+    private Integer isHot = 1;
 
     @Schema(description = "pageNo")
     //@NotNull(message = "pageNo is required")

@@ -29,7 +29,7 @@ public interface TArticleDao {
                     t_article article
                     LEFT JOIN t_article_type_relation articleRelation ON article.id = articleRelation.article_id 
                     WHERE article.status = 4
-                    
+                    AND article.is_hot = #{isHot}
                     <if test='tripTypeId !=null'>
                         AND articleRelation.type_identity = 'tripType'
                         AND articleRelation.type_id  = #{tripTypeId}
@@ -44,6 +44,6 @@ public interface TArticleDao {
         </script>
     """
     })
-    List<TArticle> queryArticleList(@Param("tripTypeId") Integer tripTypeId, @Param("cityIdList") List<Integer> cityIdList, @Param("start") Integer start, @Param("limit") Integer limit );
+    List<TArticle> queryArticleList(@Param("tripTypeId") Integer tripTypeId, @Param("cityIdList") List<Integer> cityIdList, @Param("isHot") Integer isHot, @Param("start") Integer start, @Param("limit") Integer limit );
 
 }

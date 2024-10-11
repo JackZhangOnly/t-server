@@ -36,7 +36,7 @@ public class ArticleController {
 
     @Operation(summary = "列表", description = "list")
     @RequestMapping(value = "/homeList", method = RequestMethod.POST)
-    public ApiResponse<PageVo<ArticleItemDto>> list(HttpServletRequest request, @RequestBody @Valid ArticlePageQryDto pageQryDto) {
+    public ApiResponse<PageVo<ArticleItemDto>> list(HttpServletRequest request, @RequestBody @Valid ArticleHomePageQryDto pageQryDto) {
         return articleBusService.homeList(pageQryDto);
     }
 
