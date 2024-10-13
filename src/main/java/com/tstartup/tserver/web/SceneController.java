@@ -27,24 +27,12 @@ import java.util.List;
  */
 @Tag(name = "景点")
 @RestController
-@RequestMapping("/scene")
+@RequestMapping("/api/t/scene")
 public class SceneController {
 
     @Resource
     private SceneBusService sceneBusService;
 
-    @Operation(summary = "创建或更新", description = "update")
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ApiResponse update(HttpServletRequest request, @RequestBody @Valid SceneUpdateDto updateDto) {
-        return sceneBusService.update(updateDto);
-    }
-
-
-    @Operation(summary = "删除", description = "delete")
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public ApiResponse delete(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
-        return sceneBusService.delete(commonIdDto);
-    }
 
     @Operation(summary = "列表查询", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)

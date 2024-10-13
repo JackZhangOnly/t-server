@@ -28,27 +28,15 @@ import java.util.List;
  * @author Administrator
  * @since 2024-08-17
  */
+/*
 @Tag(name = "类型分类管理")
 @RestController
-@RequestMapping("/commonType")
+@RequestMapping("/api/t/commonType")
 public class CommonTypeController {
 
     @Resource
     private CommonTypeBusService commonTypeBusService;
 
-
-    @Operation(summary = "创建或更新", description = "update")
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ApiResponse update(HttpServletRequest request, @RequestBody @Valid CommonTypeUpdateDto updateDto) {
-       return commonTypeBusService.update(updateDto);
-    }
-
-
-    @Operation(summary = "删除", description = "delete")
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public ApiResponse delete(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
-        return commonTypeBusService.delete(commonIdDto);
-    }
 
     @Operation(summary = "列表查询", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
@@ -57,4 +45,5 @@ public class CommonTypeController {
     }
 
 }
+*/
 

@@ -24,9 +24,9 @@ import java.util.List;
  * @Date 2024/8/17 22:13
  * @Version 1.0
  */
-@Tag(name = "城市")
+@Tag(name = "C端-城市")
 @RestController
-@RequestMapping("/city")
+@RequestMapping("/api/t/city")
 public class CityController {
 
     @Resource
@@ -39,9 +39,4 @@ public class CityController {
     }
 
 
-    @Operation(summary = "更新", description = "update")
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ApiResponse update(HttpServletRequest request, @RequestBody @Valid CityItemOpDto itemOpDto) {
-        return cityBusService.update(itemOpDto);
-    }
 }
