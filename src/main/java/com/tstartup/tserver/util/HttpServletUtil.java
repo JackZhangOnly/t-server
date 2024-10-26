@@ -31,8 +31,6 @@ public class HttpServletUtil {
     private static final ThreadLocal<ApiAuthToken> USER_INFO = new ThreadLocal<>();
 
     private static final String API_TOKEN = "apiToken";
-    private static final String DEVICE_ID = "deviceId";
-
     private static final String CHANNEL = "channel";
 
     private static final String LANGUAGE = "language";
@@ -47,7 +45,6 @@ public class HttpServletUtil {
 
     public static UserRequest resolveAndSaveAttributeApiHead(HttpServletRequest request) {
         String apiToken = request.getHeader(API_TOKEN);
-        String deviceId = request.getHeader(DEVICE_ID);
         String channel = request.getHeader(CHANNEL);
         String language = request.getHeader(LANGUAGE);
         String uid = request.getHeader(UID);
@@ -57,7 +54,6 @@ public class HttpServletUtil {
         apiToken = StringUtils.isBlank(apiToken) ? "" : apiToken;
 
         UserRequest userRequest = new UserRequest();
-        userRequest.setDeviceId(deviceId);
         userRequest.setChannel(channel);
         userRequest.setLanguage(language);
         userRequest.setApiToken(apiToken);
@@ -79,7 +75,6 @@ public class HttpServletUtil {
         final String EMPTY = "";
         HttpHeaders headers = request.getHeaders();
         String apiToken = CollectionUtils.isEmpty(headers.get(API_TOKEN)) ? EMPTY : headers.getFirst(API_TOKEN);
-        String deviceId = CollectionUtils.isEmpty(headers.get(DEVICE_ID)) ? EMPTY : headers.getFirst(DEVICE_ID);
         String channel = CollectionUtils.isEmpty(headers.get(CHANNEL)) ? EMPTY : headers.getFirst(CHANNEL);
 
         String language = CollectionUtils.isEmpty(headers.get(LANGUAGE)) ? EMPTY : headers.getFirst(LANGUAGE);
@@ -87,7 +82,6 @@ public class HttpServletUtil {
         apiToken = StringUtils.isBlank(apiToken) ? "" : apiToken;
 
         UserRequest userApiRequest = new UserRequest();
-        userApiRequest.setDeviceId(deviceId);
         userApiRequest.setChannel(channel);
         userApiRequest.setLanguage(language);
         userApiRequest.setApiToken(apiToken);
@@ -105,25 +99,13 @@ public class HttpServletUtil {
 
 
 
-    /**
-     * 获取当前登陆用户的uid,
-     *
-     * @param request
-     * @return
-     */
-    public static Optional<Integer> getCurrentUid(HttpServletRequest request) {
-        String userIdHeader = request.getHeader(UID);
-        if (!Strings.isNullOrEmpty(userIdHeader)) {
-            return Optional.of(Integer.parseInt(userIdHeader));
-        }
+
+    public static Integer getCurrentUid() throws Exception {
         ApiAuthToken apiToken = USER_INFO.get();
-        if (Objects.isNull(apiToken)) {
-            return Optional.empty();
+        if (Objects.isNull(apiToken) || Objects.isNull(apiToken.getUserId())) {
+            throw new Exception("Forbidden");
         }
-        if (Objects.isNull(apiToken.getUserId())) {
-            return Optional.empty();
-        }
-        return Optional.of(Integer.parseInt(apiToken.getUserId()));
+        return Integer.parseInt(apiToken.getUserId());
     }
 
     public static void falseResponse(HttpServletResponse response, String msg, int code) throws IOException {

@@ -1,5 +1,6 @@
 package com.tstartup.tserver.config;
 
+import com.tstartup.tserver.config.interceptor.ApiInterceptor;
 import com.tstartup.tserver.config.interceptor.CrmInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -14,6 +15,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Resource
     private CrmInterceptor crmInterceptor;
 
+    @Resource
+    private ApiInterceptor apiInterceptor;
+
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -24,6 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         String crmLoginUrl = "/crm/login";
 
         registry.addInterceptor(crmInterceptor).addPathPatterns(crm).excludePathPatterns(crmLoginUrl);
+        registry.addInterceptor(apiInterceptor).addPathPatterns(api).excludePathPatterns(crmLoginUrl);
 
 
     }
