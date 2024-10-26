@@ -22,7 +22,7 @@ import java.util.List;
 
 @Tag(name = "C端-用户相关")
 @RestController
-@RequestMapping("/api/t/article")
+@RequestMapping("/api/t/user")
 public class ClientUserController {
 
     @Resource
@@ -47,6 +47,6 @@ public class ClientUserController {
     public ApiResponse update(HttpServletRequest request, @RequestBody @Valid UserUpdateDto updateDto) throws Exception {
         Integer uid = HttpServletUtil.getCurrentUid();
 
-        return userBusService.update(updateDto);
+        return userBusService.update(updateDto, uid);
     }
 }

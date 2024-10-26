@@ -73,7 +73,7 @@ public class UserBusService {
         TUser tUser = tUserService.getOne(queryWrapper);
 
         if (Objects.isNull(tUser)) {
-            return ApiResponse.newParamError();
+            return ApiResponse.newParamError("Wrong username or password");
         }
 
         String token = AESUtils.encrypt(String.valueOf(tUser .getId()));
