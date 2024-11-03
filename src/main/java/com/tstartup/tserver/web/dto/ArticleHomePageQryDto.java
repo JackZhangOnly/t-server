@@ -20,6 +20,9 @@ public class ArticleHomePageQryDto {
     @Schema(description = "tripTypeId")
     private Integer tripTypeId;
 
+    @Schema(description = "articleTypeId")
+    private Integer articleTypeId;
+
 
     @Schema(description = "isHot  1:hot 0：not hot")
     private Integer isHot = 1;

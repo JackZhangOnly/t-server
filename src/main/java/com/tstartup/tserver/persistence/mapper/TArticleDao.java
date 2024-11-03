@@ -34,16 +34,21 @@ public interface TArticleDao {
                         AND articleRelation.type_identity = 'tripType'
                         AND articleRelation.type_id  = #{tripTypeId}
                     </if>
+                    <if test='articleTypeId !=null'>
+                        AND articleRelation.type_identity = 'articleType'
+                        AND articleRelation.type_id  = #{articleTypeId}
+                    </if>
                     <if test='cityIdList !=null'>
-                        AND articleRelation.type_identity = 'city'                        
-                        <foreach collection='cityIdList' item='typeId' open=' AND articleRelation.type_id IN (' separator=',' close=')'>
+                        <foreach collection='cityIdList' item='typeId' open=' AND article.dest_city IN (' separator=',' close=')'>
                           #{typeId}
                        </foreach>
                     </if>
                     order by article.id desc
+                    limit #{start},#{limit}
+
         </script>
     """
     })
-    List<TArticle> queryArticleList(@Param("tripTypeId") Integer tripTypeId, @Param("cityIdList") List<Integer> cityIdList, @Param("isHot") Integer isHot, @Param("start") Integer start, @Param("limit") Integer limit );
+    List<TArticle> queryArticleList(@Param("articleTypeId") Integer articleTypeId,@Param("tripTypeId") Integer tripTypeId, @Param("cityIdList") List<Integer> cityIdList, @Param("isHot") Integer isHot, @Param("start") Integer start, @Param("limit") Integer limit);
 
 }

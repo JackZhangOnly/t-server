@@ -25,10 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -183,15 +180,20 @@ public class ArticleBusService {
     }
 
     public ApiResponse<PageVo<ArticleItemDto>> homeList(ArticleHomePageQryDto pageQryDto) {
-        final int pageNo = 1;
-        final int pageSize = 30;
+        int pageNo = pageQryDto.getPageNo();
+        pageNo = pageNo <= 0 ? 1 : pageNo;
+        int pageSize = pageQryDto.getPageSize();
+        pageSize = pageSize <= 0 ? 10 : pageSize;
+
 
         Integer cityId = pageQryDto.getCityId();
         Integer tripTypeId = pageQryDto.getTripTypeId();
         Integer isHot = pageQryDto.getIsHot();
+        Integer articleTypeId = pageQryDto.getArticleTypeId();
+
 
         PageVo<ArticleItemDto> pageVo = new PageVo<>();
-        if (Objects.isNull(cityId) && Objects.isNull(tripTypeId)) {
+        if (Objects.isNull(cityId) && Objects.isNull(tripTypeId) && Objects.isNull(articleTypeId)) {
             LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(TArticle::getIsDelete, 0)
                     .eq(TArticle::getStatus, 4)
@@ -215,7 +217,8 @@ public class ArticleBusService {
         } else {
             List<Integer> cityIdList = null;
             if (Objects.nonNull(cityId)) {
-                cityIdList = Arrays.asList(cityId);
+                cityIdList = new ArrayList<>();
+                cityIdList.add(cityId);
                 TCity city = cityService.getById(cityId);
                 if (city.getParentId() == 0) {
                     List<TCity> cityList = cityService.list(Wrappers.<TCity>lambdaQuery().eq(TCity::getParentId, cityId));
@@ -226,7 +229,7 @@ public class ArticleBusService {
                 }
             }
             Integer start = (pageNo - 1) * pageSize;
-            List<TArticle> tArticleList = articleDao.queryArticleList(tripTypeId, cityIdList, isHot, start, pageSize);
+            List<TArticle> tArticleList = articleDao.queryArticleList(articleTypeId, tripTypeId, cityIdList, isHot, start, pageSize);
             if (!CollectionUtils.isEmpty(tArticleList)) {
                 List<ArticleItemDto> articleItemDtoList = tArticleList.stream().map(tArticle -> {
                     ArticleItemDto vo = new ArticleItemDto();

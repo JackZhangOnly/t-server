@@ -2,6 +2,7 @@ package com.tstartup.tserver.web;
 
 
 import com.tstartup.tserver.common.response.ApiResponse;
+import com.tstartup.tserver.config.IgnoreLogin;
 import com.tstartup.tserver.service.SceneBusService;
 import com.tstartup.tserver.web.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +37,7 @@ public class SceneController {
 
     @Operation(summary = "列表查询", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
+    @IgnoreLogin
     public ApiResponse<List<SceneItemDto>> list(HttpServletRequest request, @RequestBody @Valid SceneQryDto sceneQryDto) {
         return sceneBusService.list(sceneQryDto);
     }

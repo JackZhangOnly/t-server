@@ -1,6 +1,7 @@
 package com.tstartup.tserver.web;
 
 import com.tstartup.tserver.common.response.ApiResponse;
+import com.tstartup.tserver.config.IgnoreLogin;
 import com.tstartup.tserver.service.CityBusService;
 import com.tstartup.tserver.web.dto.CityItemDto;
 import com.tstartup.tserver.web.dto.CityItemOpDto;
@@ -34,6 +35,7 @@ public class CityController {
 
     @Operation(summary = "列表", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
+    @IgnoreLogin
     public ApiResponse<List<CityItemDto>> list(HttpServletRequest request, @RequestBody @Valid CityQryDto cityQryDto) {
         return cityBusService.list(cityQryDto);
     }

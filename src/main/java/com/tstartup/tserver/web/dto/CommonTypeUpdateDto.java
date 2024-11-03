@@ -27,7 +27,7 @@ public class CommonTypeUpdateDto implements Serializable {
     @NotNull(message = "desc is required")
     private String desc;
 
-    @Schema(description = "业务类型；tripType、tag、keyword、articleType、transportType、sceneType 、sceneId（景点id类型）")
+    @Schema(description = "业务类型；tripType、tag、keyword、articleType、transportType、sceneType 、sceneId（景点id类型）、city")
     @NotNull(message = "typeIdentity is required")
     private String typeIdentity;
 
