@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CirclePostDto {
+public class CircleCommentDto {
 
     @Schema(description = "id")
     private Integer id;
@@ -19,6 +19,9 @@ public class CirclePostDto {
 
     @Schema(description = "圈子id")
     private Integer circleId;
+
+    @Schema(description = "发布id")
+    private Integer postId;
 
     @Schema(description = "发布内容")
     private String content;

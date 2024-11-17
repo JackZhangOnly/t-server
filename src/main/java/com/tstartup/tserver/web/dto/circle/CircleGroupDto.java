@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -18,6 +19,8 @@ import java.io.Serializable;
  * @since 2024-10-02
  */
 @Data
+@NoArgsConstructor
+
 public class CircleGroupDto implements Serializable {
 
     @Schema(description = "id")
