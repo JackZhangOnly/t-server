@@ -23,7 +23,9 @@ public class CircleGroupBusService {
     public ApiResponse<List<CircleGroupDto>> groupList(CircleQryDto qryDto) {
         Integer type = qryDto.getType();
 
-        List<TCircleGroup> circleGroupList = circleGroupService.list(Wrappers.<TCircleGroup>lambdaQuery().eq(Objects.nonNull(type) && type == 1, TCircleGroup::getIsHot , 1));
+        List<TCircleGroup> circleGroupList = circleGroupService.list(Wrappers.<TCircleGroup>lambdaQuery()
+                .eq(Objects.nonNull(type) && type == 1, TCircleGroup::getIsHot , 1)
+                .orderByDesc(TCircleGroup::getCreateTime));
 
         List<CircleGroupDto> circleGroupDtoList = circleGroupList.stream().map(tCircleGroup -> {
             CircleGroupDto circleGroupDto = new CircleGroupDto();

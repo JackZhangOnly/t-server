@@ -1,9 +1,13 @@
 package com.tstartup.tserver.web.circle;
 
 import com.tstartup.tserver.common.response.ApiResponse;
+import com.tstartup.tserver.config.IgnoreLogin;
 import com.tstartup.tserver.service.CircleGroupBusService;
+import com.tstartup.tserver.service.CirclePostBusService;
 import com.tstartup.tserver.web.dto.circle.CircleGroupDto;
+import com.tstartup.tserver.web.dto.circle.CirclePostDto;
 import com.tstartup.tserver.web.dto.circle.CircleQryDto;
+import com.tstartup.tserver.web.dto.circle.PostQryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,12 +26,13 @@ import java.util.List;
 public class CirclePostController {
 
     @Resource
-    private CircleGroupBusService circleGroupBusService;
+    private CirclePostBusService circlePostBusService;
 
     @Operation(summary = "圈组列表", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public ApiResponse<List<CircleGroupDto>> list(HttpServletRequest request, @RequestBody @Valid CircleQryDto qryDto) {
-        return circleGroupBusService.groupList(qryDto);
+    @IgnoreLogin
+    public ApiResponse<List<CirclePostDto>> list(HttpServletRequest request, @RequestBody @Valid PostQryDto qryDto) {
+        return circlePostBusService.list(qryDto);
     }
 
 

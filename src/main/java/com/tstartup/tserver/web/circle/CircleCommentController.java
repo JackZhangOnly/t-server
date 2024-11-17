@@ -1,6 +1,7 @@
 package com.tstartup.tserver.web.circle;
 
 import com.tstartup.tserver.common.response.ApiResponse;
+import com.tstartup.tserver.config.IgnoreLogin;
 import com.tstartup.tserver.service.CircleGroupBusService;
 import com.tstartup.tserver.web.dto.circle.CircleGroupDto;
 import com.tstartup.tserver.web.dto.circle.CircleQryDto;
@@ -26,6 +27,7 @@ public class CircleCommentController {
 
     @Operation(summary = "圈组列表", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
+    @IgnoreLogin
     public ApiResponse<List<CircleGroupDto>> list(HttpServletRequest request, @RequestBody @Valid CircleQryDto qryDto) {
         return circleGroupBusService.groupList(qryDto);
     }
