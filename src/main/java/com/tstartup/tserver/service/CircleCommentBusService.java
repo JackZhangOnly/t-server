@@ -8,8 +8,10 @@ import com.tstartup.tserver.persistence.dataobject.TCirclePost;
 import com.tstartup.tserver.persistence.dataobject.TUser;
 import com.tstartup.tserver.persistence.service.TCircleCommentService;
 import com.tstartup.tserver.persistence.service.TUserService;
+import com.tstartup.tserver.util.DateUtil;
 import com.tstartup.tserver.web.dto.circle.CircleCommentDto;
 import com.tstartup.tserver.web.dto.circle.CirclePostDto;
+import com.tstartup.tserver.web.dto.circle.CommentAddDto;
 import com.tstartup.tserver.web.dto.circle.CommentQryDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -56,5 +58,17 @@ public class CircleCommentBusService {
         }).collect(Collectors.toList());
 
         return ApiResponse.newSuccess(commentDtoList);
+    }
+
+    public ApiResponse add(Integer uid, CommentAddDto commentAddDto) {
+        TCircleComment tCircleComment = new TCircleComment();
+
+        BeanUtils.copyProperties(commentAddDto, tCircleComment);
+
+        tCircleComment.setUid(uid);
+        tCircleComment.setCreateTime(DateUtil.getNowSeconds());
+        circleCommentService.save(tCircleComment);
+
+        return ApiResponse.newSuccess();
     }
 }

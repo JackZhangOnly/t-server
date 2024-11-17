@@ -43,7 +43,7 @@ public class HttpServletUtil {
 
 
 
-    public static UserRequest resolveAndSaveAttributeApiHead(HttpServletRequest request) {
+    public static UserRequest parseApiHead(HttpServletRequest request) {
         String apiToken = request.getHeader(API_TOKEN);
         String channel = request.getHeader(CHANNEL);
         String language = request.getHeader(LANGUAGE);
@@ -66,32 +66,6 @@ public class HttpServletUtil {
         return userRequest;
     }
 
-    /**
-     * 解析headers内容
-     * @param request
-     * @return
-     */
-    public static UserRequest resolveAndSaveAttributeApiHead(ServerHttpRequest request) {
-        final String EMPTY = "";
-        HttpHeaders headers = request.getHeaders();
-        String apiToken = CollectionUtils.isEmpty(headers.get(API_TOKEN)) ? EMPTY : headers.getFirst(API_TOKEN);
-        String channel = CollectionUtils.isEmpty(headers.get(CHANNEL)) ? EMPTY : headers.getFirst(CHANNEL);
-
-        String language = CollectionUtils.isEmpty(headers.get(LANGUAGE)) ? EMPTY : headers.getFirst(LANGUAGE);
-        String uid = CollectionUtils.isEmpty(headers.get(UID)) ? "0" : headers.getFirst(UID);
-        apiToken = StringUtils.isBlank(apiToken) ? "" : apiToken;
-
-        UserRequest userApiRequest = new UserRequest();
-        userApiRequest.setChannel(channel);
-        userApiRequest.setLanguage(language);
-        userApiRequest.setApiToken(apiToken);
-        userApiRequest.setUid(uid);
-
-        USER_REQUEST_INFO.set(userApiRequest);
-
-
-        return userApiRequest;
-    }
 
     public static void setUserInfo(ApiAuthToken apiToken) {
         USER_INFO.set(apiToken);
@@ -103,7 +77,7 @@ public class HttpServletUtil {
     public static Integer getCurrentUid() throws Exception {
         ApiAuthToken apiToken = USER_INFO.get();
         if (Objects.isNull(apiToken) || Objects.isNull(apiToken.getUserId())) {
-            throw new Exception("Forbidden");
+            throw new Exception("forbidden api");
         }
         return Integer.parseInt(apiToken.getUserId());
     }

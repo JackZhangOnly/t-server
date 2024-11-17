@@ -62,7 +62,7 @@ public class CrmInterceptor implements HandlerInterceptor {
             apiToken.setUserId(id);
             HttpServletUtil.setUserInfo(apiToken);
         }
-        HttpServletUtil.resolveAndSaveAttributeApiHead(request);
+        HttpServletUtil.parseApiHead(request);
 
         //进入的时间
         request.setAttribute(CURRENT_TIME_MILLIS, System.currentTimeMillis());

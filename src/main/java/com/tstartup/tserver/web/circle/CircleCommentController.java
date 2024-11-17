@@ -4,10 +4,8 @@ import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.config.IgnoreLogin;
 import com.tstartup.tserver.service.CircleCommentBusService;
 import com.tstartup.tserver.service.CircleGroupBusService;
-import com.tstartup.tserver.web.dto.circle.CircleCommentDto;
-import com.tstartup.tserver.web.dto.circle.CircleGroupDto;
-import com.tstartup.tserver.web.dto.circle.CircleQryDto;
-import com.tstartup.tserver.web.dto.circle.CommentQryDto;
+import com.tstartup.tserver.util.HttpServletUtil;
+import com.tstartup.tserver.web.dto.circle.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +31,14 @@ public class CircleCommentController {
     @IgnoreLogin
     public ApiResponse<List<CircleCommentDto>> list(HttpServletRequest request, @RequestBody @Valid CommentQryDto qryDto) {
         return circleCommentBusService.list(qryDto);
+    }
+
+
+    @Operation(summary = "发帖", description = "add")
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public ApiResponse add(HttpServletRequest request, @RequestBody @Valid CommentAddDto dto) throws Exception {
+        Integer uid = HttpServletUtil.getCurrentUid();
+        return circleCommentBusService.add(uid, dto);
     }
 
 

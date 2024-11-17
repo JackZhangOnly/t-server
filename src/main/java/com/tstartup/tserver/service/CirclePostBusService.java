@@ -7,7 +7,9 @@ import com.tstartup.tserver.persistence.dataobject.TCirclePost;
 import com.tstartup.tserver.persistence.dataobject.TUser;
 import com.tstartup.tserver.persistence.service.TCirclePostService;
 import com.tstartup.tserver.persistence.service.TUserService;
+import com.tstartup.tserver.util.DateUtil;
 import com.tstartup.tserver.web.dto.circle.CirclePostDto;
+import com.tstartup.tserver.web.dto.circle.PostAddDto;
 import com.tstartup.tserver.web.dto.circle.PostQryDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -55,5 +57,17 @@ public class CirclePostBusService {
         }).collect(Collectors.toList());
 
         return ApiResponse.newSuccess(postDtoList);
+    }
+
+    public ApiResponse add(Integer uid, PostAddDto postAddDto) {
+        TCirclePost circlePost = new TCirclePost();
+        BeanUtils.copyProperties(postAddDto, circlePost);
+
+        circlePost.setUid(uid);
+        circlePost.setCreateTime(DateUtil.getNowSeconds());
+
+        circlePostService.save(circlePost);
+
+        return ApiResponse.newSuccess();
     }
 }
