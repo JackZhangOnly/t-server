@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
-@Tag(name = "C端-圈子-分组")
+@Tag(name = "C端-圈子-评论")
 @RestController
 @RequestMapping("/api/t/circleComment")
 public class CircleCommentController {
@@ -26,7 +26,7 @@ public class CircleCommentController {
     @Resource
     private CircleCommentBusService circleCommentBusService;
 
-    @Operation(summary = "圈组列表", description = "list")
+    @Operation(summary = "评论列表", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @IgnoreLogin
     public ApiResponse<List<CircleCommentDto>> list(HttpServletRequest request, @RequestBody @Valid CommentQryDto qryDto) {

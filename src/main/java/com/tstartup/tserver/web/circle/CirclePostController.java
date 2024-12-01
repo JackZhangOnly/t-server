@@ -26,11 +26,19 @@ public class CirclePostController {
     @Resource
     private CirclePostBusService circlePostBusService;
 
-    @Operation(summary = "圈组列表", description = "list")
+    @Operation(summary = "帖子列表", description = "list")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @IgnoreLogin
     public ApiResponse<List<CirclePostDto>> list(HttpServletRequest request, @RequestBody @Valid PostQryDto qryDto) {
         return circlePostBusService.list(qryDto);
+    }
+
+
+    @Operation(summary = "大家都在聊", description = "list")
+    @RequestMapping(value = "/listRecently", method = RequestMethod.POST)
+    @IgnoreLogin
+    public ApiResponse<List<CirclePostDto>> listRecently(HttpServletRequest request, @RequestBody PostListRecentlyQry qryDto) {
+        return circlePostBusService.listRecently(qryDto);
     }
 
 
