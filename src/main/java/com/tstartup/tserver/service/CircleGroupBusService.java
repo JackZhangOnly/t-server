@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.persistence.dataobject.TCircleGroup;
 import com.tstartup.tserver.persistence.service.TCircleGroupService;
+import com.tstartup.tserver.web.dto.CommonIdDto;
 import com.tstartup.tserver.web.dto.circle.CircleGroupDto;
 import com.tstartup.tserver.web.dto.circle.CircleQryDto;
 import org.springframework.beans.BeanUtils;
@@ -35,5 +36,18 @@ public class CircleGroupBusService {
         }).collect(Collectors.toList());
 
         return ApiResponse.newSuccess(circleGroupDtoList);
+    }
+
+    public ApiResponse<CircleGroupDto> detail(CommonIdDto commonIdDto) {
+        Integer id = commonIdDto.getId();
+
+        TCircleGroup tCircleGroup = circleGroupService.getById(id);
+        if (Objects.isNull(tCircleGroup)) {
+            return ApiResponse.newParamError("not exist");
+        }
+        CircleGroupDto circleGroupDto = new CircleGroupDto();
+        BeanUtils.copyProperties(tCircleGroup, circleGroupDto);
+
+        return ApiResponse.newSuccess(circleGroupDto);
     }
 }

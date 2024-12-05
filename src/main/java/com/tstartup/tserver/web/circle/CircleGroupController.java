@@ -6,6 +6,7 @@ import com.tstartup.tserver.config.IgnoreLogin;
 import com.tstartup.tserver.service.CircleGroupBusService;
 import com.tstartup.tserver.web.dto.ArticleItemDto;
 import com.tstartup.tserver.web.dto.ArticlePageQryDto;
+import com.tstartup.tserver.web.dto.CommonIdDto;
 import com.tstartup.tserver.web.dto.circle.CircleGroupDto;
 import com.tstartup.tserver.web.dto.circle.CircleQryDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +34,13 @@ public class CircleGroupController {
     @IgnoreLogin
     public ApiResponse<List<CircleGroupDto>> list(HttpServletRequest request, @RequestBody @Valid CircleQryDto qryDto) {
         return circleGroupBusService.groupList(qryDto);
+    }
+
+    @Operation(summary = "详情", description = "detail")
+    @RequestMapping(value = "/detail", method = RequestMethod.POST)
+    @IgnoreLogin
+    public ApiResponse<CircleGroupDto> detail(HttpServletRequest request, @RequestBody @Valid CommonIdDto qryDto) {
+        return circleGroupBusService.detail(qryDto);
     }
 
 

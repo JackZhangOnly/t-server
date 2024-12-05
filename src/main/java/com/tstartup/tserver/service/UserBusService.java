@@ -52,6 +52,7 @@ public class UserBusService {
 
         tUser = new TUser();
         tUser.setUsername(username);
+        tUser.setNickName(username);
         tUser.setPassword(Md5Utils.md5Hex(password));
         tUser.setEmail(email);
         tUser.setCreateTime(DateUtil.getNowSeconds());

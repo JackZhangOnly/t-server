@@ -42,5 +42,13 @@ public class ArticleController {
         return articleBusService.homeList(pageQryDto);
     }
 
+
+    @Operation(summary = "详情", description = "detail")
+    @RequestMapping(value = "/detail", method = RequestMethod.POST)
+    @IgnoreLogin
+    public ApiResponse<ArticleItemDto> detail(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
+        return articleBusService.detail(commonIdDto);
+    }
+
 }
 

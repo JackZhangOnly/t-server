@@ -264,6 +264,35 @@ public class ArticleBusService {
 
     }
 
+    public ApiResponse<ArticleItemDto> detail(CommonIdDto commonIdDto) {
+        ArticleItemDto articleItemDto = new ArticleItemDto();
+
+        Integer id = commonIdDto.getId();
+
+        TArticle tArticle = articleService.getById(id);
+        if (Objects.isNull(tArticle)) {
+            return ApiResponse.newParamError("not exist");
+        }
+        BeanUtils.copyProperties(tArticle, articleItemDto);
+
+        String source = tArticle.getSource();
+        if (!Strings.isNullOrEmpty(source)) {
+            SourceItemVo sourceItemVo = JSON.parseObject(source, SourceItemVo.class);
+            articleItemDto.setSource(sourceItemVo);
+        }
+
+        List<ArticleItemDto> recordList = Arrays.asList(articleItemDto);
+        buildCommonTypeItemList(recordList, CommonTypeEnum.KEYWORD);
+        buildCommonTypeItemList(recordList, CommonTypeEnum.TAG);
+        buildCommonTypeItemList(recordList, CommonTypeEnum.ARTICLE_TYPE);
+        buildCommonTypeItemList(recordList, CommonTypeEnum.TRIP_TYPE);
+        buildCommonTypeItemList(recordList, CommonTypeEnum.SCENE_ID);
+
+        ArticleItemDto itemDto = recordList.get(0);
+
+        return ApiResponse.newSuccess(itemDto);
+    }
+
     public ApiResponse<PageArticleVo> listByAdmin(ArticlePageQryDto pageQryDto) {
         LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(TArticle::getIsDelete, 0);

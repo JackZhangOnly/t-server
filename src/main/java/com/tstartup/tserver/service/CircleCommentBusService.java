@@ -1,6 +1,7 @@
 package com.tstartup.tserver.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.google.api.client.util.Strings;
 import com.google.common.collect.Maps;
 import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.persistence.dataobject.TCircleComment;
@@ -20,6 +21,8 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,13 +40,13 @@ public class CircleCommentBusService {
                 .eq(TCircleComment::getPostId, qryDto.getPostId())
                 .orderByDesc(TCircleComment::getCreateTime));
 
-        List<Integer> uidList = circleCommentList.stream().map(TCircleComment::getUid).collect(Collectors.toList());
-        Map<Integer, String> uidNameMap;
+        List<Integer> uidList = circleCommentList.stream().map(TCircleComment::getUid).distinct().collect(Collectors.toList());
+        Map<Integer, TUser> userMap;
         if (!CollectionUtils.isEmpty(uidList)) {
             List<TUser> tUserList = tUserService.list(Wrappers.<TUser>lambdaQuery().in(TUser::getId, uidList));
-            uidNameMap = tUserList.stream().collect(Collectors.toMap(TUser::getId, TUser::getNickName, (k1, k2) -> k1));
+            userMap = tUserList.stream().collect(Collectors.toMap(TUser::getId, Function.identity(), (k1, k2) -> k1));
         } else {
-            uidNameMap = Maps.newHashMap();
+            userMap = Maps.newHashMap();
         }
 
         List<CircleCommentDto> commentDtoList = circleCommentList.stream().map(tCircleComment -> {
@@ -52,8 +55,10 @@ public class CircleCommentBusService {
             CircleCommentDto commentDto = new CircleCommentDto();
             BeanUtils.copyProperties(tCircleComment, commentDto);
 
-            commentDto.setAuthor(uidNameMap.get(uid));
-
+            TUser tUser = userMap.get(uid);
+            if (Objects.nonNull(tUser)) {
+                commentDto.setAuthor(Strings.isNullOrEmpty(tUser.getNickName()) ? tUser.getUsername() : tUser.getNickName());
+            }
             return commentDto;
         }).collect(Collectors.toList());
 

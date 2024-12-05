@@ -1,6 +1,7 @@
 package com.tstartup.tserver.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.google.api.client.util.Strings;
 import com.google.common.collect.Maps;
 import com.tstartup.tserver.common.response.ApiResponse;
 import com.tstartup.tserver.persistence.dataobject.TCirclePost;
@@ -20,6 +21,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,13 +40,13 @@ public class CirclePostBusService {
                 .eq(TCirclePost::getCircleId, qryDto.getCircleId())
                 .orderByDesc(TCirclePost::getCreateTime));
 
-        List<Integer> postUidList = postList.stream().map(TCirclePost::getUid).collect(Collectors.toList());
-        Map<Integer, String> uidNameMap;
+        List<Integer> postUidList = postList.stream().map(TCirclePost::getUid).distinct().collect(Collectors.toList());
+        Map<Integer, TUser> userMap;
         if (!CollectionUtils.isEmpty(postUidList)) {
             List<TUser> tUserList = tUserService.list(Wrappers.<TUser>lambdaQuery().in(TUser::getId, postUidList));
-            uidNameMap = tUserList.stream().collect(Collectors.toMap(TUser::getId, TUser::getNickName, (k1, k2) -> k1));
+            userMap = tUserList.stream().collect(Collectors.toMap(TUser::getId, Function.identity(), (k1, k2) -> k1));
         } else {
-            uidNameMap = Maps.newHashMap();
+            userMap = Maps.newHashMap();
         }
 
         List<CirclePostDto> postDtoList = postList.stream().map(tCirclePost -> {
@@ -53,7 +55,10 @@ public class CirclePostBusService {
             CirclePostDto circlePostDto = new CirclePostDto();
             BeanUtils.copyProperties(tCirclePost, circlePostDto);
 
-            circlePostDto.setAuthor(uidNameMap.get(uid));
+            TUser tUser = userMap.get(uid);
+            if (Objects.nonNull(tUser)) {
+                circlePostDto.setAuthor(Strings.isNullOrEmpty(tUser.getNickName()) ? tUser.getUsername() : tUser.getNickName());
+            }
 
             return circlePostDto;
         }).collect(Collectors.toList());
@@ -67,12 +72,12 @@ public class CirclePostBusService {
                 .orderByDesc(TCirclePost::getId).last("limit " + size));
 
         List<Integer> postUidList = postList.stream().map(TCirclePost::getUid).collect(Collectors.toList());
-        Map<Integer, String> uidNameMap;
+        Map<Integer, TUser> userMap;
         if (!CollectionUtils.isEmpty(postUidList)) {
             List<TUser> tUserList = tUserService.list(Wrappers.<TUser>lambdaQuery().in(TUser::getId, postUidList));
-            uidNameMap = tUserList.stream().collect(Collectors.toMap(TUser::getId, TUser::getNickName, (k1, k2) -> k1));
+            userMap = tUserList.stream().collect(Collectors.toMap(TUser::getId, Function.identity(), (k1, k2) -> k1));
         } else {
-            uidNameMap = Maps.newHashMap();
+            userMap = Maps.newHashMap();
         }
 
         List<CirclePostDto> postDtoList = postList.stream().map(tCirclePost -> {
@@ -81,8 +86,10 @@ public class CirclePostBusService {
             CirclePostDto circlePostDto = new CirclePostDto();
             BeanUtils.copyProperties(tCirclePost, circlePostDto);
 
-            circlePostDto.setAuthor(uidNameMap.get(uid));
-
+            TUser tUser = userMap.get(uid);
+            if (Objects.nonNull(tUser)) {
+                circlePostDto.setAuthor(Strings.isNullOrEmpty(tUser.getNickName()) ? tUser.getUsername() : tUser.getNickName());
+            }
             return circlePostDto;
         }).collect(Collectors.toList());
 
