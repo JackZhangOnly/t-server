@@ -6,6 +6,7 @@ import com.tstartup.tserver.persistence.dataobject.TCircleGroup;
 import com.tstartup.tserver.persistence.service.TCircleGroupService;
 import com.tstartup.tserver.web.dto.CommonIdDto;
 import com.tstartup.tserver.web.dto.circle.CircleGroupDto;
+import com.tstartup.tserver.web.dto.circle.CircleGroupJoinDto;
 import com.tstartup.tserver.web.dto.circle.CircleQryDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -49,5 +50,13 @@ public class CircleGroupBusService {
         BeanUtils.copyProperties(tCircleGroup, circleGroupDto);
 
         return ApiResponse.newSuccess(circleGroupDto);
+    }
+    public ApiResponse join(Integer uid, CircleGroupJoinDto dto) {
+
+        return ApiResponse.newSuccess();
+    }
+
+    public ApiResponse<List<CircleGroupDto>> myGroupList(Integer uid) {
+        return ApiResponse.newSuccess();
     }
 }
