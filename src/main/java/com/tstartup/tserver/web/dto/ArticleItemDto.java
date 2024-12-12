@@ -39,8 +39,9 @@ public class ArticleItemDto {
     @Schema(description = "tagList")
     private List<CommonTypeItemDto> tagList;
 
-    @Schema(description = "cityList")
-    private List<CommonTypeItemDto> cityList;
+   /* @Schema(description = "cityList")
+    private List<CommonTypeItemDto> cityList;*/
+
 
     @Schema(description = "articleTypeList")
     private List<CommonTypeItemDto> articleTypeList;
@@ -53,9 +54,20 @@ public class ArticleItemDto {
 
     private Integer tripType;
 
-    private String startCity;
+    @Schema(description = "startCityId")
+    private Integer startCity;
 
-    private String destCity;
+    @Schema(description = "目标城市id")
+    private Integer destCity;
+
+    @Schema(description = "目标国家id")
+    private Integer destCountry;
+
+    @Schema(description = "国家名称")
+    private String countryName;
+
+    @Schema(description = "城市名称")
+    private String cityName;
 
     private String hotelInfo;
 

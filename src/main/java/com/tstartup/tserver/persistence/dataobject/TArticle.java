@@ -46,9 +46,12 @@ public class TArticle implements Serializable {
 
     private Integer tripType;
 
-    private String startCity;
+    private Integer startCity;
 
-    private String destCity;
+    private Integer destCity;
+
+    private Integer destCountry;
+
 
     private String hotelInfo;
 

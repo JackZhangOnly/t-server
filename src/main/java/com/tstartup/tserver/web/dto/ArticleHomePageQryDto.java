@@ -13,6 +13,10 @@ import lombok.Data;
 @Data
 public class ArticleHomePageQryDto {
 
+    @Schema(description = "countryId")
+    private Integer countryId;
+
+
     @Schema(description = "cityId")
     private Integer cityId;
 

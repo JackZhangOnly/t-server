@@ -67,7 +67,7 @@ public class ArticleBusService {
 
             List<Integer> keywordIdList = updateDto.getKeywordIdList();
             List<Integer> tagIdList = updateDto.getTagIdList();
-            List<Integer> cityIdList = updateDto.getCityIdList();
+            //List<Integer> cityIdList = updateDto.getCityIdList();
             List<Integer> sceneIdList = updateDto.getSceneIdList();
             List<Integer> tripTypeIdList = updateDto.getTripTypeIdList();
             List<Integer> articleTypeIdList = updateDto.getArticleTypeIdList();
@@ -82,7 +82,7 @@ public class ArticleBusService {
 
             processAddCommonType(keywordIdList, articleId, CommonTypeEnum.KEYWORD);
             processAddCommonType(tagIdList, articleId, CommonTypeEnum.TAG);
-            processAddCommonType(cityIdList, articleId, CommonTypeEnum.CITY);
+            //processAddCommonType(cityIdList, articleId, CommonTypeEnum.CITY);
             processAddCommonType(sceneIdList, articleId, CommonTypeEnum.SCENE_ID);
             processAddCommonType(tripTypeIdList, articleId, CommonTypeEnum.TRIP_TYPE);
             processAddCommonType(articleTypeIdList, articleId, CommonTypeEnum.ARTICLE_TYPE);
@@ -110,7 +110,7 @@ public class ArticleBusService {
 
             List<Integer> keywordIdList = updateDto.getKeywordIdList();
             List<Integer> tagIdList = updateDto.getTagIdList();
-            List<Integer> cityIdList = updateDto.getCityIdList();
+            //List<Integer> cityIdList = updateDto.getCityIdList();
             List<Integer> sceneIdList = updateDto.getSceneIdList();
             List<Integer> tripTypeIdList = updateDto.getTripTypeIdList();
             List<Integer> articleTypeIdList = updateDto.getArticleTypeIdList();
@@ -121,7 +121,7 @@ public class ArticleBusService {
             processUpdateCommonType(keywordIdList, articleId, CommonTypeEnum.KEYWORD, typeRelationList);
             processUpdateCommonType(tripTypeIdList, articleId, CommonTypeEnum.TRIP_TYPE, typeRelationList);
             processUpdateCommonType(tagIdList, articleId, CommonTypeEnum.TAG, typeRelationList);
-            processUpdateCommonType(cityIdList, articleId, CommonTypeEnum.CITY, typeRelationList);
+            //processUpdateCommonType(cityIdList, articleId, CommonTypeEnum.CITY, typeRelationList);
             processUpdateCommonType(sceneIdList, articleId, CommonTypeEnum.SCENE_ID, typeRelationList);
             processUpdateCommonType(articleTypeIdList, articleId, CommonTypeEnum.ARTICLE_TYPE, typeRelationList);
 
@@ -186,6 +186,7 @@ public class ArticleBusService {
         pageSize = pageSize <= 0 ? 10 : pageSize;
 
 
+        Integer countryId = pageQryDto.getCountryId();
         Integer cityId = pageQryDto.getCityId();
         Integer tripTypeId = pageQryDto.getTripTypeId();
         Integer isHot = pageQryDto.getIsHot();
@@ -193,7 +194,7 @@ public class ArticleBusService {
 
 
         PageVo<ArticleItemDto> pageVo = new PageVo<>();
-        if (Objects.isNull(cityId) && Objects.isNull(tripTypeId) && Objects.isNull(articleTypeId)) {
+        if (Objects.isNull(countryId) && Objects.isNull(cityId) && Objects.isNull(tripTypeId) && Objects.isNull(articleTypeId)) {
             LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(TArticle::getIsDelete, 0)
                     .eq(TArticle::getStatus, 4)
@@ -216,7 +217,7 @@ public class ArticleBusService {
             });
         } else {
             List<Integer> cityIdList = null;
-            if (Objects.nonNull(cityId)) {
+            /*if (Objects.nonNull(cityId)) {
                 cityIdList = new ArrayList<>();
                 cityIdList.add(cityId);
                 TCity city = cityService.getById(cityId);
@@ -227,9 +228,9 @@ public class ArticleBusService {
                         cityIdList.addAll(cityIdListNew);
                     }
                 }
-            }
+            }*/
             Integer start = (pageNo - 1) * pageSize;
-            List<TArticle> tArticleList = articleDao.queryArticleList(articleTypeId, tripTypeId, cityIdList, isHot, start, pageSize);
+            List<TArticle> tArticleList = articleDao.queryArticleList(articleTypeId, tripTypeId, countryId, cityId, isHot, start, pageSize);
             if (!CollectionUtils.isEmpty(tArticleList)) {
                 List<ArticleItemDto> articleItemDtoList = tArticleList.stream().map(tArticle -> {
                     ArticleItemDto vo = new ArticleItemDto();
@@ -256,12 +257,42 @@ public class ArticleBusService {
         buildCommonTypeItemList(recordList, CommonTypeEnum.TRIP_TYPE);
         buildCommonTypeItemList(recordList, CommonTypeEnum.SCENE_ID);
 
+        List<Integer> countryCityIdList = new ArrayList<>();
+        List<Integer> countryIdList = recordList.stream().map(ArticleItemDto::getDestCountry).distinct().toList();
+        List<Integer> cityIdList = recordList.stream().map(ArticleItemDto::getDestCity).distinct().toList();
+        countryCityIdList.addAll(countryIdList);
+        countryCityIdList.addAll(cityIdList);
+
+
+        Map<Integer, String> countryIdNameMap = getCountryIdNameMap(countryCityIdList);
+
+        recordList.forEach(articleItemDto -> {
+            Integer destCountry = articleItemDto.getDestCountry();
+            Integer destCity = articleItemDto.getDestCity();
+
+            if (Objects.nonNull(destCountry)) {
+                articleItemDto.setCountryName(countryIdNameMap.get(destCountry));
+            }
+            if (Objects.nonNull(destCity)) {
+                articleItemDto.setCityName(countryIdNameMap.get(destCity));
+            }
+        });
+
+
         PageArticleVo pageArticleVo = new PageArticleVo();
         pageArticleVo.setRecords(recordList);
         pageArticleVo.setTotal(pageVo.getTotal());
 
         return ApiResponse.newSuccess(pageVo);
 
+    }
+
+    private Map<Integer, String> getCountryIdNameMap(List<Integer> countryCityIdList) {
+        if (CollectionUtils.isEmpty(countryCityIdList)) {
+            return Maps.newHashMap();
+        }
+        List<TCity> cityList = cityService.list(Wrappers.<TCity>lambdaQuery().in(TCity::getId, countryCityIdList));
+        return cityList.stream().collect(Collectors.toMap(TCity::getId, TCity::getName, (k1, k2) -> k1));
     }
 
     public ApiResponse<ArticleItemDto> detail(CommonIdDto commonIdDto) {

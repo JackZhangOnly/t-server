@@ -20,6 +20,21 @@ import java.util.List;
 public interface TArticleDao {
 
 
+    /**
+     *
+     <if test='cityIdList !=null'>
+     <foreach collection='cityIdList' item='typeId' open=' AND article.dest_city IN (' separator=',' close=')'>
+     #{typeId}
+     </foreach>
+     </if>
+     * @param articleTypeId
+     * @param tripTypeId
+     * @param countryId
+     * @param isHot
+     * @param start
+     * @param limit
+     * @return
+     */
     @Select({
     """
         <script>
@@ -38,10 +53,11 @@ public interface TArticleDao {
                         AND articleRelation.type_identity = 'articleType'
                         AND articleRelation.type_id  = #{articleTypeId}
                     </if>
-                    <if test='cityIdList !=null'>
-                        <foreach collection='cityIdList' item='typeId' open=' AND article.dest_city IN (' separator=',' close=')'>
-                          #{typeId}
-                       </foreach>
+                    <if test='countryId !=null'>
+                         AND article.dest_country = #{countryId}
+                    </if>
+                    <if test='cityId !=null'>
+                         AND article.dest_city = #{cityId}
                     </if>
                     order by article.id desc
                     limit #{start},#{limit}
@@ -49,6 +65,6 @@ public interface TArticleDao {
         </script>
     """
     })
-    List<TArticle> queryArticleList(@Param("articleTypeId") Integer articleTypeId,@Param("tripTypeId") Integer tripTypeId, @Param("cityIdList") List<Integer> cityIdList, @Param("isHot") Integer isHot, @Param("start") Integer start, @Param("limit") Integer limit);
+    List<TArticle> queryArticleList(@Param("articleTypeId") Integer articleTypeId,@Param("tripTypeId") Integer tripTypeId, @Param("countryId") Integer countryId, @Param("cityId") Integer cityId, @Param("isHot") Integer isHot, @Param("start") Integer start, @Param("limit") Integer limit);
 
 }

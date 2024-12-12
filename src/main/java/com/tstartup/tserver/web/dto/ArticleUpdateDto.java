@@ -39,9 +39,9 @@ public class ArticleUpdateDto {
     //@NotNull(message = "tagIdList is required")
     private List<Integer> tagIdList;
 
-    @Schema(description = "city idList")
+  /*  @Schema(description = "city idList")
     //@NotNull(message = "cityIdList is required")
-    private List<Integer> cityIdList;
+    private List<Integer> cityIdList;*/
 
     @Schema(description = "scene idList")
     private List<Integer> sceneIdList;
@@ -54,10 +54,14 @@ public class ArticleUpdateDto {
     private List<Integer> tripTypeIdList;
 
     @Schema(description = "startCity")
-    private String startCity;
+    private Integer startCity;
 
-    @Schema(description = "destCity")
-    private String destCity;
+    @Schema(description = "目标国家")
+    private Integer destCountry;
+
+    @Schema(description = "目标城市")
+    private Integer destCity;
+
 
     @Schema(description = "hotelInfo")
     private String hotelInfo;
