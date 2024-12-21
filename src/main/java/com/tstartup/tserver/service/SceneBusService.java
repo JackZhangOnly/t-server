@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -115,11 +116,30 @@ public class SceneBusService {
 
     public ApiResponse<List<SceneItemDto>> list(SceneQryDto sceneQryDto) {
         Integer cityId = sceneQryDto.getCityId();
-        String sceneName = sceneQryDto.getSceneName();
+        //String sceneName = sceneQryDto.getSceneName();
 
         List<TScene> sceneList = sceneService.list(Wrappers.<TScene>lambdaQuery()
-                .eq(Objects.nonNull(cityId) && cityId > 0, TScene::getCityId, cityId)
-                .like(Objects.nonNull(sceneName), TScene::getEnName, sceneName));
+                .eq(Objects.nonNull(cityId) && cityId > 0, TScene::getCityId, cityId));
+                //.like(Objects.nonNull(sceneName), TScene::getEnName, sceneName));
+        List<SceneItemDto> sceneItemDtoList = buildSceneItemDto(sceneList);
+
+        return ApiResponse.newSuccess(sceneItemDtoList);
+    }
+
+    public ApiResponse<SceneItemDto> detail(CommonIdDto dto){
+        Integer id = dto.getId();
+
+        TScene scene = sceneService.getById(id);
+        if (Objects.isNull(scene)) {
+            return ApiResponse.newParamError();
+        }
+        List<SceneItemDto> sceneItemDtoList = buildSceneItemDto(Arrays.asList(scene));
+
+        return ApiResponse.newSuccess(sceneItemDtoList.get(0));
+    }
+
+    public List<SceneItemDto> buildSceneItemDto(List<TScene> sceneList) {
+
         List<Integer> cityIdList = sceneList.stream().map(TScene::getCityId).collect(Collectors.toList());
         Map<Integer,TCity> cityMap = Maps.newHashMap();
         if (!CollectionUtils.isEmpty(cityIdList)) {
@@ -182,7 +202,7 @@ public class SceneBusService {
             });
         }
 
-        return ApiResponse.newSuccess(sceneItemDtoList);
+        return sceneItemDtoList;
     }
 
 }

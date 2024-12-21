@@ -42,6 +42,12 @@ public class SceneController {
         return sceneBusService.list(sceneQryDto);
     }
 
+    @Operation(summary = "详情", description = "detail")
+    @RequestMapping(value = "/detail", method = RequestMethod.POST)
+    @IgnoreLogin
+    public ApiResponse<SceneItemDto> detail(HttpServletRequest request, @RequestBody @Valid CommonIdDto dto) {
+        return sceneBusService.detail(dto);
+    }
 
 }
 

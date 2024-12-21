@@ -16,7 +16,7 @@ public class SceneQryDto {
     @Schema(description = "城市id")
     private Integer cityId;
 
-    @Schema(description = "景点名称")
-    private String sceneName;
+    //@Schema(description = "景点名称")
+    //private String sceneName;
 
 }
