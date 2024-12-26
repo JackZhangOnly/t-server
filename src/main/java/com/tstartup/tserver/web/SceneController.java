@@ -26,7 +26,7 @@ import java.util.List;
  * @author Administrator
  * @since 2024-08-18
  */
-@Tag(name = "景点")
+@Tag(name = "C端-景点")
 @RestController
 @RequestMapping("/api/t/scene")
 public class SceneController {

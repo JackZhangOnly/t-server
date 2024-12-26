@@ -13,8 +13,8 @@ import lombok.Data;
 @Data
 public class SourceItemVo {
 
-    @Schema(description = "名称")
-    private String name;
+  /*  @Schema(description = "名称")
+    private String name;*/
 
     @Schema(description = "链接")
     private String url;
@@ -25,7 +25,7 @@ public class SourceItemVo {
     @Schema(description = "多媒体链接")
     private String mediaLink;
 
-    @Schema(description = "作者")
-    private String author;
+   /* @Schema(description = "作者")
+    private String author;*/
 
 }

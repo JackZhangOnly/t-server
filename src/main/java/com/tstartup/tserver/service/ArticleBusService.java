@@ -215,6 +215,8 @@ public class ArticleBusService {
 
                 return vo;
             });
+            pageVo.setTotal(page.getTotal());
+
         } else {
             List<Integer> cityIdList = null;
             /*if (Objects.nonNull(cityId)) {
@@ -244,8 +246,11 @@ public class ArticleBusService {
 
                     return vo;
                 }).collect(Collectors.toList());
+
+                Integer cnt = articleDao.queryArticleCnt(articleTypeId, tripTypeId, countryId, cityId, isHot);
+
                 pageVo.setRecords(articleItemDtoList);
-                pageVo.setTotal(Long.valueOf(articleItemDtoList.size()));
+                pageVo.setTotal(Long.valueOf(cnt));
             }
         }
 
@@ -328,6 +333,8 @@ public class ArticleBusService {
         LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(TArticle::getIsDelete, 0);
         queryWrapper.ne(TArticle::getStatus, 5);
+        queryWrapper.orderByDesc(TArticle::getId);
+
 
 
         Page<TArticle> page = articleService.page(new Page<>(pageQryDto.getPageNo(), pageQryDto.getPageSize()), queryWrapper);
