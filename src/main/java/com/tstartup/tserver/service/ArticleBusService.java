@@ -330,33 +330,62 @@ public class ArticleBusService {
     }
 
     public ApiResponse<PageArticleVo> listByAdmin(ArticlePageQryDto pageQryDto) {
-        LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
+        Integer countryId = pageQryDto.getCountryId();
+        Integer articleTypeId = pageQryDto.getArticleTypeId();
+        String headline = pageQryDto.getHeadline();
+        Integer pageNo = pageQryDto.getPageNo();
+        Integer pageSize = pageQryDto.getPageSize();
+        /*LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(TArticle::getIsDelete, 0);
         queryWrapper.ne(TArticle::getStatus, 5);
-        queryWrapper.orderByDesc(TArticle::getId);
+        queryWrapper.orderByDesc(TArticle::getId);*/
 
 
+        PageVo<ArticleItemDto> pageVo = new PageVo<>();
 
-        Page<TArticle> page = articleService.page(new Page<>(pageQryDto.getPageNo(), pageQryDto.getPageSize()), queryWrapper);
+        Integer start = (pageNo - 1) * pageSize;
+        List<TArticle> tArticleList = articleDao.queryArticleAdminList(countryId, articleTypeId, headline, start, pageSize);
+        if (!CollectionUtils.isEmpty(tArticleList)) {
+            List<ArticleItemDto> articleItemDtoList = tArticleList.stream().map(tArticle -> {
+                ArticleItemDto vo = new ArticleItemDto();
+                BeanUtils.copyProperties(tArticle, vo);
 
-        PageVo<ArticleItemDto> pageVo = PageUtil.getPageVo(page, (e) -> {
-            ArticleItemDto vo = new ArticleItemDto();
+                String source = tArticle.getSource();
+                if (!Strings.isNullOrEmpty(source)) {
+                    SourceItemVo sourceItemVo = JSON.parseObject(source, SourceItemVo.class);
+                    vo.setSource(sourceItemVo);
+                }
 
-            BeanUtils.copyProperties(e, vo);
-            String source = e.getSource();
-            if (!Strings.isNullOrEmpty(source)) {
-                SourceItemVo sourceItemVo = JSON.parseObject(source, SourceItemVo.class);
-                vo.setSource(sourceItemVo);
-            }
-            /*String keywords = e.getKeywords();
-            if (!Strings.isNullOrEmpty(keywords)) {
-                List<String> keywordsList = JSON.parseArray(keywords, String.class);
-                vo.setKeywords(keywordsList);
-            }*/
+                return vo;
+            }).collect(Collectors.toList());
 
-            return vo;
-        });
+            Integer cnt = articleDao.queryArticleAdminCnt(countryId, articleTypeId, headline);
+
+            pageVo.setRecords(articleItemDtoList);
+            pageVo.setTotal(Long.valueOf(cnt));
+        }
+
         List<ArticleItemDto> recordList = pageVo.getRecords();
+        List<Integer> countryCityIdList = new ArrayList<>();
+        List<Integer> countryIdList = recordList.stream().map(ArticleItemDto::getDestCountry).distinct().toList();
+        List<Integer> cityIdList = recordList.stream().map(ArticleItemDto::getDestCity).distinct().toList();
+        countryCityIdList.addAll(countryIdList);
+        countryCityIdList.addAll(cityIdList);
+
+
+        Map<Integer, String> countryIdNameMap = getCountryIdNameMap(countryCityIdList);
+
+        recordList.forEach(articleItemDto -> {
+            Integer destCountry = articleItemDto.getDestCountry();
+            Integer destCity = articleItemDto.getDestCity();
+
+            if (Objects.nonNull(destCountry)) {
+                articleItemDto.setCountryName(countryIdNameMap.get(destCountry));
+            }
+            if (Objects.nonNull(destCity)) {
+                articleItemDto.setCityName(countryIdNameMap.get(destCity));
+            }
+        });
 
         buildCommonTypeItemList(recordList, CommonTypeEnum.KEYWORD);
         buildCommonTypeItemList(recordList, CommonTypeEnum.TAG);

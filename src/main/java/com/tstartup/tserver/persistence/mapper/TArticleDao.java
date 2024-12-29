@@ -103,4 +103,70 @@ public interface TArticleDao {
             """
     })
     Integer queryArticleCnt(@Param("articleTypeId") Integer articleTypeId,@Param("tripTypeId") Integer tripTypeId, @Param("countryId") Integer countryId, @Param("cityId") Integer cityId, @Param("isHot") Integer isHot);
+
+
+
+
+    @Select({
+            """
+                <script>
+                        SELECT
+                            t2.*
+                        FROM t_article t2 WHERE  id IN (SELECT
+                            distinct article.id
+                        FROM
+                            t_article article
+                            LEFT JOIN t_article_type_relation articleRelation ON article.id = articleRelation.article_id 
+                            WHERE 
+                            article.status != 5
+                            AND article.is_delete = 0
+                            <if test='countryId !=null'>
+                                 AND article.dest_country = #{countryId}
+                            </if>
+                            <if test='articleTypeId !=null'>
+                                AND articleRelation.type_identity = 'articleType'
+                                AND articleRelation.type_id  = #{articleTypeId}
+                            </if>
+                            <if test='headline !=null'>
+                                AND article.headline LIKE CONCAT('%', #{headline}, '%')
+                            </if>
+                        )
+                        order by t2.id desc
+                        limit #{start},#{limit}
+        
+                </script>
+            """
+    })
+    List<TArticle> queryArticleAdminList(@Param("countryId") Integer countryId, @Param("articleTypeId") Integer articleTypeId, @Param("headline") String headline, @Param("start") Integer start, @Param("limit") Integer limit);
+
+
+    @Select({
+        """
+            <script>
+                    SELECT
+                        count(1)
+                    FROM t_article t2 WHERE  id IN (SELECT
+                        distinct article.id
+                    FROM
+                        t_article article
+                        LEFT JOIN t_article_type_relation articleRelation ON article.id = articleRelation.article_id 
+                        WHERE 
+                        article.status != 5
+                        AND article.is_delete = 0
+                        <if test='articleTypeId !=null'>
+                            AND articleRelation.type_identity = 'articleType'
+                            AND articleRelation.type_id  = #{articleTypeId}
+                        </if>
+                        <if test='countryId !=null'>
+                             AND article.dest_country = #{countryId}
+                        </if>
+                        <if test='headline !=null'>
+                            AND article.headline LIKE CONCAT('%', #{headline}, '%')
+                        </if>
+                    )
+            </script>
+        """
+    })
+    Integer queryArticleAdminCnt(@Param("countryId") Integer countryId, @Param("articleTypeId") Integer articleTypeId, @Param("headline") String headline);
+
 }
