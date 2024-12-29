@@ -215,7 +215,11 @@
             <version>9.1.1</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.9.1</version> <!-- 请使用最新的版本号 -->
+        </dependency>
 
 
     </dependencies>
