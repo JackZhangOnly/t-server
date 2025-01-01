@@ -400,6 +400,83 @@ public class ArticleBusService {
         return ApiResponse.newSuccess(pageArticleVo);
     }
 
+    public ApiResponse<List<ArticleItemDto>> getListBySceneId(CommonIdDto commonIdDto) {
+        Integer id = commonIdDto.getId();
+
+        List<TArticleTypeRelation> typeRelationList = articleTypeRelationService.list(Wrappers.<TArticleTypeRelation>lambdaQuery()
+                .eq(TArticleTypeRelation::getTypeId, id)
+                .eq(TArticleTypeRelation::getTypeIdentity, CommonTypeEnum.SCENE_ID.getType())
+                .orderByDesc(TArticleTypeRelation::getId)
+                .last("limit 100"));
+
+        List<Integer> articleIdList = typeRelationList.stream().map(TArticleTypeRelation::getArticleId).distinct().toList();
+        if (articleIdList.size() > 30) {
+            articleIdList = articleIdList.subList(0, 30);
+        }
+        if (CollectionUtils.isEmpty(articleIdList)) {
+            return ApiResponse.newSuccess();
+        }
+        List<TArticle> articleList = articleService.list(Wrappers.<TArticle>lambdaQuery()
+                .in(TArticle::getId, articleIdList)
+                .orderByDesc(TArticle::getId));
+        List<ArticleItemDto> articleItemDtoList = buildArticleItemList(articleList);
+
+        return ApiResponse.newSuccess(articleItemDtoList);
+    }
+
+    /**
+     * build article
+     * @param tArticleList
+     * @return
+     */
+    private List<ArticleItemDto> buildArticleItemList(List<TArticle> tArticleList) {
+        List<ArticleItemDto> articleItemDtoList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(tArticleList)) {
+            articleItemDtoList = tArticleList.stream().map(tArticle -> {
+                ArticleItemDto vo = new ArticleItemDto();
+                BeanUtils.copyProperties(tArticle, vo);
+
+                String source = tArticle.getSource();
+                if (!Strings.isNullOrEmpty(source)) {
+                    SourceItemVo sourceItemVo = JSON.parseObject(source, SourceItemVo.class);
+                    vo.setSource(sourceItemVo);
+                }
+
+                return vo;
+            }).collect(Collectors.toList());
+
+        }
+
+        List<Integer> countryCityIdList = new ArrayList<>();
+        List<Integer> countryIdList = tArticleList.stream().map(TArticle::getDestCountry).distinct().toList();
+        List<Integer> cityIdList = tArticleList.stream().map(TArticle::getDestCity).distinct().toList();
+        countryCityIdList.addAll(countryIdList);
+        countryCityIdList.addAll(cityIdList);
+
+
+        Map<Integer, String> countryIdNameMap = getCountryIdNameMap(countryCityIdList);
+
+        articleItemDtoList.forEach(articleItemDto -> {
+            Integer destCountry = articleItemDto.getDestCountry();
+            Integer destCity = articleItemDto.getDestCity();
+
+            if (Objects.nonNull(destCountry)) {
+                articleItemDto.setCountryName(countryIdNameMap.get(destCountry));
+            }
+            if (Objects.nonNull(destCity)) {
+                articleItemDto.setCityName(countryIdNameMap.get(destCity));
+            }
+        });
+
+        buildCommonTypeItemList(articleItemDtoList, CommonTypeEnum.KEYWORD);
+        buildCommonTypeItemList(articleItemDtoList, CommonTypeEnum.TAG);
+        buildCommonTypeItemList(articleItemDtoList, CommonTypeEnum.ARTICLE_TYPE);
+        buildCommonTypeItemList(articleItemDtoList, CommonTypeEnum.TRIP_TYPE);
+        buildCommonTypeItemList(articleItemDtoList, CommonTypeEnum.SCENE_ID);
+
+        return articleItemDtoList;
+    }
+
 
     public void buildCommonTypeItemList(List<ArticleItemDto> itemDtoList, CommonTypeEnum commonTypeEnum) {
         List<Integer> articleIdList = itemDtoList.stream().map(ArticleItemDto::getId).collect(Collectors.toList());

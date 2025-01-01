@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * <p>
@@ -50,5 +51,11 @@ public class ArticleController {
         return articleBusService.detail(commonIdDto);
     }
 
+    @Operation(summary = "根据景点id查询文章", description = "getListBySceneId")
+    @RequestMapping(value = "/getListBySceneId", method = RequestMethod.POST)
+    @IgnoreLogin
+    public ApiResponse<List<ArticleItemDto>> getListBySceneId(HttpServletRequest request, @RequestBody @Valid CommonIdDto commonIdDto) {
+        return articleBusService.getListBySceneId(commonIdDto);
+    }
 }
 
