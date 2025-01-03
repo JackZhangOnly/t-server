@@ -13,13 +13,13 @@ import java.util.List;
  * @Version 1.0
  */
 @Data
-public class PageArticleVo {
+public class PageArticleVo<T> {
 
     /**
      * 数据
      */
     @Schema(description = "数据")
-    private List<ArticleItemDto> records;
+    private List<T> records;
 
     /**
      * 总数

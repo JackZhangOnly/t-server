@@ -39,7 +39,11 @@ public interface TArticleDao {
     """
         <script>
                 SELECT
-                    t2.*
+                    t2.id,
+                    t2.headline,
+                    t2.status,
+                    t2.is_hot,
+                    t2.source
                 FROM t_article t2 WHERE  id IN (SELECT
                     distinct article.id
                 FROM

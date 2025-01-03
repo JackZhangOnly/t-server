@@ -17,6 +17,7 @@ import com.tstartup.tserver.persistence.service.*;
 import com.tstartup.tserver.util.DateUtil;
 import com.tstartup.tserver.util.PageUtil;
 import com.tstartup.tserver.web.dto.*;
+import com.tstartup.tserver.web.dto.article.ArticleItemSimpleDto;
 import com.tstartup.tserver.web.vo.SceneSimpleItemDto;
 import com.tstartup.tserver.web.vo.SourceItemVo;
 import org.springframework.beans.BeanUtils;
@@ -179,7 +180,7 @@ public class ArticleBusService {
         }
     }
 
-    public ApiResponse<PageVo<ArticleItemDto>> homeList(ArticleHomePageQryDto pageQryDto) {
+    public ApiResponse<PageVo<ArticleItemSimpleDto>> homeList(ArticleHomePageQryDto pageQryDto) {
         int pageNo = pageQryDto.getPageNo();
         pageNo = pageNo <= 0 ? 1 : pageNo;
         int pageSize = pageQryDto.getPageSize();
@@ -193,7 +194,7 @@ public class ArticleBusService {
         Integer articleTypeId = pageQryDto.getArticleTypeId();
 
 
-        PageVo<ArticleItemDto> pageVo = new PageVo<>();
+        PageVo<ArticleItemSimpleDto> pageVo = new PageVo<>();
         if (Objects.isNull(countryId) && Objects.isNull(cityId) && Objects.isNull(tripTypeId) && Objects.isNull(articleTypeId)) {
             LambdaQueryWrapper<TArticle> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(TArticle::getIsDelete, 0)
@@ -204,43 +205,26 @@ public class ArticleBusService {
 
             Page<TArticle> page = articleService.page(new Page<>(pageNo, pageSize), queryWrapper);
             pageVo = PageUtil.getPageVo(page, (e) -> {
-                ArticleItemDto vo = new ArticleItemDto();
+                ArticleItemSimpleDto vo = new ArticleItemSimpleDto();
                 BeanUtils.copyProperties(e, vo);
-
-                String source = e.getSource();
-                if (!Strings.isNullOrEmpty(source)) {
-                    SourceItemVo sourceItemVo = JSON.parseObject(source, SourceItemVo.class);
-                    vo.setSource(sourceItemVo);
-                }
 
                 return vo;
             });
             pageVo.setTotal(page.getTotal());
 
         } else {
-            List<Integer> cityIdList = null;
-            /*if (Objects.nonNull(cityId)) {
-                cityIdList = new ArrayList<>();
-                cityIdList.add(cityId);
-                TCity city = cityService.getById(cityId);
-                if (city.getParentId() == 0) {
-                    List<TCity> cityList = cityService.list(Wrappers.<TCity>lambdaQuery().eq(TCity::getParentId, cityId));
-                    if (!CollectionUtils.isEmpty(cityList)) {
-                        List<Integer> cityIdListNew = cityList.stream().map(TCity::getId).collect(Collectors.toList());
-                        cityIdList.addAll(cityIdListNew);
-                    }
-                }
-            }*/
+
             Integer start = (pageNo - 1) * pageSize;
             List<TArticle> tArticleList = articleDao.queryArticleList(articleTypeId, tripTypeId, countryId, cityId, isHot, start, pageSize);
             if (!CollectionUtils.isEmpty(tArticleList)) {
-                List<ArticleItemDto> articleItemDtoList = tArticleList.stream().map(tArticle -> {
-                    ArticleItemDto vo = new ArticleItemDto();
+                List<ArticleItemSimpleDto> articleItemDtoList = tArticleList.stream().map(tArticle -> {
+                    ArticleItemSimpleDto vo = new ArticleItemSimpleDto();
                     BeanUtils.copyProperties(tArticle, vo);
 
                     String source = tArticle.getSource();
                     if (!Strings.isNullOrEmpty(source)) {
                         SourceItemVo sourceItemVo = JSON.parseObject(source, SourceItemVo.class);
+                        sourceItemVo.setUrl("");
                         vo.setSource(sourceItemVo);
                     }
 
@@ -254,9 +238,9 @@ public class ArticleBusService {
             }
         }
 
-        List<ArticleItemDto> recordList = pageVo.getRecords();
+        List<ArticleItemSimpleDto> recordList = pageVo.getRecords();
 
-        buildCommonTypeItemList(recordList, CommonTypeEnum.KEYWORD);
+        /*buildCommonTypeItemList(recordList, CommonTypeEnum.KEYWORD);
         buildCommonTypeItemList(recordList, CommonTypeEnum.TAG);
         buildCommonTypeItemList(recordList, CommonTypeEnum.ARTICLE_TYPE);
         buildCommonTypeItemList(recordList, CommonTypeEnum.TRIP_TYPE);
@@ -281,10 +265,10 @@ public class ArticleBusService {
             if (Objects.nonNull(destCity)) {
                 articleItemDto.setCityName(countryIdNameMap.get(destCity));
             }
-        });
+        });*/
 
 
-        PageArticleVo pageArticleVo = new PageArticleVo();
+        PageArticleVo<ArticleItemSimpleDto> pageArticleVo = new PageArticleVo();
         pageArticleVo.setRecords(recordList);
         pageArticleVo.setTotal(pageVo.getTotal());
 

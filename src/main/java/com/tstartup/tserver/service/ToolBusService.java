@@ -34,6 +34,7 @@ public class ToolBusService {
     @Resource
     private TArticleTypeRelationService tArticleTypeRelationService;
 
+    String apiKey = "";
     // API Endpoint
     String url = "https://api.moonshot.cn/v1/chat/completions";
 
